@@ -1,0 +1,6 @@
+{
+  "name": "CAREER PLUS+",
+  "description": "CAREER PLUS+ - AI Career Intelligence, ATS Resume Analysis & Mock Interview Platform",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
