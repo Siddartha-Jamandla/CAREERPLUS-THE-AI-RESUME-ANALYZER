@@ -1,11 +1,19 @@
 # CAREER PLUS+ 🚀
 > **Enterprise AI Career Intelligence & Resume Optimization Ecosystem**
 
+[![Live Web Application](https://img.shields.io/badge/🌐_Live_Application-Access_Now-blueviolet?style=for-the-badge&logo=googlechrome)](https://ais-pre-fke23lhf5bkusvioby2jgc-254916830401.asia-southeast1.run.app)
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC.svg)](https://tailwindcss.com/)
 [![Node.js](https://img.shields.io/badge/Node.js-Express-green.svg)](https://nodejs.org/)
 [![AI Engine](https://img.shields.io/badge/AI_Engine-Gemini-orange.svg)](https://ai.google.dev/)
+
+---
+
+## 🌐 Live Web Application Link
+
+Access the published live web app here:
+👉 **[CAREER PLUS+ Live Application](https://ais-pre-fke23lhf5bkusvioby2jgc-254916830401.asia-southeast1.run.app)**
 
 ---
 
