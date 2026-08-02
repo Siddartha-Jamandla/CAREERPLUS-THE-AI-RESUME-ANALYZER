@@ -21,8 +21,8 @@
 * **Title**: AIML Engineer & AI Systems Architect
 * **Location**: Hyderabad, Telangana, India (Pincode: 500013)
 * **Email**: [jamandlasiddartha@gmail.com](mailto:jamandlasiddartha@gmail.com)
-* **LinkedIn**: [linkedin.com/in/jsiddartha](https://linkedin.com/in/jsiddartha)
-* **GitHub**: [github.com/jsiddartha](https://github.com/jsiddartha)
+* **LinkedIn**: [linkedin.com/in/siddartha-jamandla](https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android)
+* **GitHub**: [github.com/siddarthajamandla-sketch](https://github.com/siddarthajamandla-sketch)
 
 ---
 
@@ -74,7 +74,7 @@
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/jsiddartha/career-plus.git
+   git clone https://github.com/siddarthajamandla-sketch/career-plus.git
    cd career-plus
    ```
 

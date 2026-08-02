@@ -129,7 +129,7 @@ export const AboutUsView: React.FC<AboutUsViewProps> = ({
               <span>jamandlasiddartha@gmail.com</span>
             </a>
             <a
-              href="https://linkedin.com/in/jsiddartha"
+              href="https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android"
               target="_blank"
               rel="noreferrer"
               className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer"
@@ -138,7 +138,7 @@ export const AboutUsView: React.FC<AboutUsViewProps> = ({
               <span>LinkedIn</span>
             </a>
             <a
-              href="https://github.com/jsiddartha"
+              href="https://github.com/siddarthajamandla-sketch"
               target="_blank"
               rel="noreferrer"
               className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer"

@@ -57,11 +57,11 @@ export const LinkedInOptimizer: React.FC<LinkedInOptimizerProps> = ({
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   // Candidate Branding Default Details
-  const candidateName = analysis?.extractedDetails?.candidateName || 'J Siddartha';
-  const candidateRole = analysis?.extractedDetails?.currentRole || targetRole || 'Senior Full-Stack Engineer & AI Developer';
+  const candidateName = analysis?.extractedDetails?.candidateName || 'Siddartha Jamandla';
+  const candidateRole = analysis?.extractedDetails?.currentRole || targetRole || 'AIML Engineer & AI Systems Architect';
 
   // LinkedIn Post Generator State
-  const [linkedinUrl, setLinkedinUrl] = useState<string>('https://linkedin.com/in/jsiddartha');
+  const [linkedinUrl, setLinkedinUrl] = useState<string>('https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android');
   const [postType, setPostType] = useState<string>('Project Showcase & Technical Deep Dive');
   const [topic, setTopic] = useState<string>('Architecting a high-throughput AI Career Intelligence Engine with sub-50ms latency using React, Node.js & Redis');
   const [tone, setTone] = useState<string>('Inspiring, Technical, and Professional');
@@ -207,7 +207,7 @@ export const LinkedInOptimizer: React.FC<LinkedInOptimizerProps> = ({
                   type="text"
                   value={linkedinUrl}
                   onChange={(e) => setLinkedinUrl(e.target.value)}
-                  placeholder="https://linkedin.com/in/jsiddartha"
+                  placeholder="https://www.linkedin.com/in/siddartha-jamandla-97350b384"
                   className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>

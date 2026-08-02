@@ -120,7 +120,7 @@ export const FounderModal: React.FC<FounderModalProps> = ({ isOpen, onClose }) =
           <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center space-x-2">
               <a
-                href="https://linkedin.com/in/jsiddartha"
+                href="https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android"
                 target="_blank"
                 rel="noreferrer"
                 className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5"
@@ -129,7 +129,7 @@ export const FounderModal: React.FC<FounderModalProps> = ({ isOpen, onClose }) =
                 <span>LinkedIn</span>
               </a>
               <a
-                href="https://github.com/jsiddartha"
+                href="https://github.com/siddarthajamandla-sketch"
                 target="_blank"
                 rel="noreferrer"
                 className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5"

@@ -45,8 +45,8 @@ export const PortfolioGenerator: React.FC<PortfolioGeneratorProps> = ({ analysis
     title: currentRole,
     bio: 'Passionate software engineer crafting scalable web applications, distributed cloud services, and performant user experiences.',
     email: 'j.siddartha@example.com',
-    github: 'https://github.com/jsiddartha',
-    linkedin: 'https://linkedin.com/in/jsiddartha',
+    github: 'https://github.com/siddarthajamandla-sketch',
+    linkedin: 'https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android',
     customSlug: candidateName.toLowerCase().replace(/\s+/g, '-'),
     seoTitle: `${candidateName} - ${currentRole} | Portfolio & Web Resume`,
     seoDescription: `Explore ${candidateName}'s software engineering portfolio, featured cloud projects, technical skills, and career timeline.`
