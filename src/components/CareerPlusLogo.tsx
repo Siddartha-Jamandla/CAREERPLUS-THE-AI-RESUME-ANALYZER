@@ -38,14 +38,14 @@ export const CareerPlusLogo: React.FC<CareerPlusLogoProps> = ({
       {showText && (
         <div className="flex flex-col justify-center">
           <div className="flex items-center space-x-1 leading-none">
-            <span className={`font-black tracking-tight text-base sm:text-lg ${lightText ? 'text-white' : 'text-slate-900'}`}>
+            <span className={`font-black tracking-tight text-base sm:text-lg ${lightText ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
               CAREER
             </span>
             <span className="font-black tracking-tight text-base sm:text-lg text-amber-500">
               PLUS+
             </span>
           </div>
-          <span className={`text-[9px] font-extrabold uppercase tracking-widest ${lightText ? 'text-slate-400' : 'text-slate-500'}`}>
+          <span className={`text-[9px] font-extrabold uppercase tracking-widest ${lightText ? 'text-slate-400' : 'text-slate-500 dark:text-slate-400'}`}>
             AI Intelligence
           </span>
         </div>

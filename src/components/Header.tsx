@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { 
+  Home,
   Sparkles, 
   FileText, 
   Target, 
@@ -73,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
   const isAdmin = currentUser?.isAdmin || currentUser?.email.toLowerCase() === 'jamandlasiddartha@gmail.com';
 
   const primaryNav = [
-    { id: 'input', label: 'Analyzer', icon: FileText },
+    { id: 'input', label: 'Home', icon: Home },
     { id: 'jobs', label: 'Jobs & Projects', icon: Briefcase },
     { id: 'chat', label: 'AI Coach', icon: MessageSquare },
     { id: 'reviews', label: 'Reviews', icon: Star },
@@ -89,14 +90,6 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'community-hub', label: 'Alumni & Peer Network', icon: Users },
   ];
 
-  const careerTools = [
-    { id: 'career', label: 'Career Pathways', icon: TrendingUp },
-    { id: 'salary', label: 'Salary Evaluator', icon: Calculator },
-    { id: 'offer-evaluator', label: 'Offer & Equity Evaluator', icon: Calculator },
-    { id: 'tracker', label: 'Job Tracker CRM', icon: Briefcase },
-    { id: 'extension', label: 'Job Extension Auto-Sync', icon: Puzzle },
-  ];
-
   const resumeTools = [
     { id: 'builder', label: 'Resume Builder', icon: Edit3 },
     { id: 'bullets', label: 'Bullet Rewrite Studio', icon: Edit3 },
@@ -108,10 +101,19 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'skills', label: 'Skill Matrix', icon: Target },
   ];
 
+  const careerTools = [
+    { id: 'career', label: 'Career Pathways', icon: TrendingUp },
+    { id: 'salary', label: 'Salary Evaluator', icon: Calculator },
+    { id: 'offer-evaluator', label: 'Offer & Equity Evaluator', icon: Calculator },
+    { id: 'tracker', label: 'Job Tracker CRM', icon: Briefcase },
+    { id: 'extension', label: 'Job Extension Auto-Sync', icon: Puzzle },
+  ];
+
   const handleNavClick = (tabId: string) => {
     setActiveTab(tabId);
     setMobileMenuOpen(false);
     setActiveDropdown(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -119,10 +121,20 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo & Branding */}
-          <div className="cursor-pointer" onClick={() => handleNavClick('input')}>
+          {/* Logo & Branding - Home Navigation Action */}
+          <button
+            type="button"
+            onClick={() => handleNavClick('input')}
+            title="CAREER PLUS+ Home - Click to return to Home Page"
+            aria-label="CAREER PLUS+ Home"
+            className="flex items-center space-x-2 text-left p-1 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500/40 cursor-pointer group"
+          >
             <CareerPlusLogo size="md" showText={true} />
-          </div>
+            <span className="hidden xl:inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[10px] font-extrabold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/80 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/80 transition-colors">
+              <Home className="w-2.5 h-2.5" />
+              <span>Home</span>
+            </span>
+          </button>
 
           {/* DESKTOP MAIN NAVIGATION MENU BAR */}
           <nav className="hidden lg:flex items-center space-x-1">
@@ -150,7 +162,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative" onMouseLeave={() => setActiveDropdown(null)}>
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'interview' ? null : 'interview')}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center space-x-1 px-2.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   ['interviewer', 'mock', 'voice-interview', 'interview', 'flashcards', 'community-hub'].includes(activeTab)
                     ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -162,7 +174,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               {activeDropdown === 'interview' && (
-                <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
+                <div className="absolute top-full left-0 mt-1 w-60 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
                   {interviewTools.map((t) => {
                     const Icon = t.icon;
                     return (
@@ -186,7 +198,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative" onMouseLeave={() => setActiveDropdown(null)}>
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'resume' ? null : 'resume')}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center space-x-1 px-2.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   ['builder', 'bullets', 'portfolio', 'skill-challenges', 'cover', 'linkedin', 'ats', 'skills'].includes(activeTab)
                     ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -198,7 +210,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               {activeDropdown === 'resume' && (
-                <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
+                <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
                   {resumeTools.map((t) => {
                     const Icon = t.icon;
                     return (
@@ -222,7 +234,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative" onMouseLeave={() => setActiveDropdown(null)}>
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'career' ? null : 'career')}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center space-x-1 px-2.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   ['career', 'salary', 'offer-evaluator', 'tracker', 'extension'].includes(activeTab)
                     ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -234,7 +246,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               {activeDropdown === 'career' && (
-                <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
+                <div className="absolute top-full left-0 mt-1 w-60 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
                   {careerTools.map((t) => {
                     const Icon = t.icon;
                     return (
@@ -280,7 +292,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-amber-600 fill-amber-300" />
-                <span>Admin Panel</span>
+                <span>Admin</span>
               </button>
             )}
           </nav>
@@ -292,12 +304,12 @@ export const Header: React.FC<HeaderProps> = ({
             {onOpenFounder && (
               <button
                 onClick={onOpenFounder}
-                title="Meet Founder J Siddartha"
+                title="Meet Founder Siddartha Jamandla"
                 className="hidden xl:flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-blue-900 to-slate-900 hover:from-blue-800 hover:to-slate-800 text-white rounded-xl transition-all cursor-pointer border border-blue-500/40 shadow-xs group"
               >
                 <Award className="w-4 h-4 text-amber-300 group-hover:scale-110 transition-transform" />
                 <span className="text-[11px] font-extrabold text-amber-300">
-                  Founder J Siddartha
+                  Founder Siddartha Jamandla
                 </span>
               </button>
             )}
@@ -306,7 +318,7 @@ export const Header: React.FC<HeaderProps> = ({
             {onToggleDarkMode && (
               <button
                 onClick={onToggleDarkMode}
-                title={isDarkMode ? 'Switch to 3D Light Mode' : 'Switch to 3D Dark Mode'}
+                title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                 className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 rounded-xl transition-all cursor-pointer border border-slate-200 dark:border-slate-700 shadow-xs flex items-center justify-center transform active:scale-95"
               >
                 {isDarkMode ? <Sun className="w-4 h-4 text-amber-400 fill-amber-300" /> : <Moon className="w-4 h-4 text-slate-700" />}
@@ -329,7 +341,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="hidden sm:inline">
                 {isAdmin ? 'Unlimited' : limitReached ? 'Daily Limit Reached' : `${usageCount}/${dailyLimit} Uses`}
               </span>
-              <span className="sm:hidden font-mono">
+              <span className="sm:hidden font-mono text-[11px]">
                 {isAdmin ? '∞' : `${usageCount}/${dailyLimit}`}
               </span>
             </button>
@@ -337,7 +349,7 @@ export const Header: React.FC<HeaderProps> = ({
             {hasAnalysis && (
               <button
                 onClick={onNewAnalysisClick}
-                className="hidden sm:flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-extrabold rounded-xl transition-colors shadow-xs cursor-pointer btn-3d-primary"
+                className="hidden sm:flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-extrabold rounded-xl transition-colors shadow-xs cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 <span>New Analysis</span>
@@ -349,26 +361,26 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="relative">
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center space-x-2 p-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all border border-slate-200 cursor-pointer"
+                  className="flex items-center space-x-2 p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition-all border border-slate-200 dark:border-slate-700 cursor-pointer"
                 >
                   <img
                     src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || currentUser.email)}&background=2563eb&color=ffffff&bold=true&size=256`}
                     alt={currentUser.name}
-                    className="w-7 h-7 rounded-lg object-cover border border-white"
+                    className="w-7 h-7 rounded-lg object-cover border border-white dark:border-slate-800"
                   />
-                  <span className="text-xs font-bold text-slate-800 hidden md:block max-w-[100px] truncate">
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 hidden md:block max-w-[100px] truncate">
                     {currentUser.name.split(' ')[0]}
                   </span>
                   {isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-amber-600 fill-amber-300 shrink-0" />}
                 </button>
 
                 {userDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in duration-150">
-                    <div className="px-3 py-2 border-b border-slate-100 space-y-0.5">
-                      <span className="font-extrabold text-slate-900 text-xs block">{currentUser.name}</span>
-                      <span className="text-[10px] text-slate-500 font-mono block truncate">{currentUser.email}</span>
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in duration-150">
+                    <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 space-y-0.5">
+                      <span className="font-extrabold text-slate-900 dark:text-white text-xs block">{currentUser.name}</span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block truncate">{currentUser.email}</span>
                       {isAdmin && (
-                        <span className="inline-block mt-1 px-2 py-0.5 bg-amber-100 text-amber-900 font-extrabold text-[9px] rounded-md uppercase">
+                        <span className="inline-block mt-1 px-2 py-0.5 bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 font-extrabold text-[9px] rounded-md uppercase">
                           Super Admin
                         </span>
                       )}
@@ -377,16 +389,16 @@ export const Header: React.FC<HeaderProps> = ({
                     <div className="py-1 space-y-0.5">
                       <button
                         onClick={() => { handleNavClick('profile'); setUserDropdownOpen(false); }}
-                        className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-lg flex items-center space-x-2 cursor-pointer"
+                        className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center space-x-2 cursor-pointer"
                       >
-                        <User className="w-3.5 h-3.5 text-blue-600" />
+                        <User className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                         <span>View Profile & Saved Reports</span>
                       </button>
 
                       {isAdmin && (
                         <button
                           onClick={() => { handleNavClick('admin'); setUserDropdownOpen(false); }}
-                          className="w-full text-left px-3 py-2 text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg flex items-center space-x-2 cursor-pointer"
+                          className="w-full text-left px-3 py-2 text-xs font-bold text-amber-900 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/60 rounded-lg flex items-center space-x-2 cursor-pointer"
                         >
                           <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
                           <span>Admin Management Portal</span>
@@ -395,7 +407,7 @@ export const Header: React.FC<HeaderProps> = ({
 
                       <button
                         onClick={() => { onLogout(); setUserDropdownOpen(false); }}
-                        className="w-full text-left px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg flex items-center space-x-2 cursor-pointer"
+                        className="w-full text-left px-3 py-2 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg flex items-center space-x-2 cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         <span>Sign Out</span>
@@ -418,6 +430,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -428,29 +441,14 @@ export const Header: React.FC<HeaderProps> = ({
         {mobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-slate-100 dark:border-slate-800 space-y-4 animate-in slide-in-from-top-2 duration-200">
             <div className="grid grid-cols-2 gap-2">
-              {onToggleDarkMode && (
-                <button
-                  onClick={onToggleDarkMode}
-                  className="col-span-2 p-3 rounded-xl text-xs font-extrabold text-left flex items-center justify-between bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 cursor-pointer"
-                >
-                  <div className="flex items-center space-x-2">
-                    {isDarkMode ? <Sun className="w-4 h-4 text-amber-400 fill-amber-300" /> : <Moon className="w-4 h-4 text-slate-700" />}
-                    <span>{isDarkMode ? '3D Light Theme' : '3D Dark Theme'}</span>
-                  </div>
-                  <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
-                    {isDarkMode ? 'Dark Active' : 'Light Active'}
-                  </span>
-                </button>
-              )}
-
               <button
                 onClick={() => handleNavClick('input')}
                 className={`p-3 rounded-xl text-xs font-bold text-left flex items-center space-x-2 ${
                   activeTab === 'input' ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
                 }`}
               >
-                <FileText className="w-4 h-4" />
-                <span>Analyzer Home</span>
+                <Home className="w-4 h-4" />
+                <span>Home</span>
               </button>
 
               <button
@@ -510,7 +508,7 @@ export const Header: React.FC<HeaderProps> = ({
                         activeTab === item.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
-                      <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                      <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
                       <span className="truncate">{item.label}</span>
                     </button>
                   );
