@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { ResumeAnalysisResult } from '../types';
 import { getScoreColor } from '../utils/helpers';
+import { ProjectIdeasShowcase } from './ProjectIdeasShowcase';
 
 interface OverallScoreCardProps {
   result: ResumeAnalysisResult;
@@ -204,6 +205,13 @@ export const OverallScoreCard: React.FC<OverallScoreCardProps> = ({
           </ul>
         </div>
       </div>
+
+      {/* 10 AI Suggested Portfolio Projects Showcase */}
+      <ProjectIdeasShowcase
+        projects={result.portfolioProjectIdeas}
+        targetRole={targetRole}
+        onNavigateJobs={() => onNavigateTab('jobs')}
+      />
 
       {/* Quick Navigation Action Cards */}
       <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-md relative overflow-hidden">

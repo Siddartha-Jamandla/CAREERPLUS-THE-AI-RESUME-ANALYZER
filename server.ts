@@ -69,11 +69,12 @@ async function startServer() {
 
       const promptSystemInstruction = `You are a world-class Executive Resume Strategist, ATS Optimization Specialist, and Technical Career Coach.
 Your task is to analyze the provided resume against the candidate's target role and optional job description.
-Identify technical and soft skill gaps, compute accurate ATS compatibility scores, highlight formatting/impact issues, rewrite weak bullet points into high-impact metric-driven statements, suggest personalized career progression paths, construct an actionable career roadmap, and recommend 100% genuine live job opportunities, 100% free certified courses, step-by-step upskilling roadmaps, AND high-impact portfolio project ideas with free resources and execution guides to maximize resume weight.
+Identify technical and soft skill gaps, compute accurate ATS compatibility scores, highlight formatting/impact issues, rewrite weak bullet points into high-impact metric-driven statements, suggest personalized career progression paths, construct an actionable career roadmap, recommend 100% genuine live job opportunities, 100% free certified courses, step-by-step upskilling roadmaps, AND suggest EXACTLY 10 high-impact, production-grade portfolio project ideas tailored to close the candidate's specific skill gaps and maximize hiring manager interest.
 
 Be thoroughly objective, insightful, and practical. Ensure scores are realistic (do not over-inflate).
 Categories for Action Items: 'Skills', 'ATS & Formatting', 'Impact & Metrics', 'Keywords'.
 Importance levels for missing skills: 'Critical', 'High', 'Medium'.
+For portfolioProjectIdeas: Generate exactly 10 distinct, production-grade projects spanning frontend, backend, AI/LLMs, cloud/DevOps, caching/microservices, real-time streaming, and system architecture. Provide realistic GitHub templates, step-by-step roadmaps, and ready-to-use quantified resume bullet points for each.
 For applyUrl and directUrl, provide valid genuine URLs (e.g. LinkedIn, Indeed, Coursera, freeCodeCamp, edX search or direct platform URLs).`;
 
       const promptText = `
@@ -352,7 +353,7 @@ ${resumeText ? resumeText : '[See attached file contents]'}`;
           },
           portfolioProjectIdeas: {
             type: Type.ARRAY,
-            description: 'Provide 10-15 high-impact portfolio projects with step-by-step roadmap and free resources to build resume weight',
+            description: 'Provide exactly 10 high-impact portfolio projects tailored to close skill gaps with step-by-step roadmap, tech stack, documentation, and ready-to-use resume bullet points',
             items: {
               type: Type.OBJECT,
               properties: {

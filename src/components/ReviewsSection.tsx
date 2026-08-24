@@ -180,7 +180,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
     : '4.9';
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto animate-in fade-in duration-300">
+    <div className="space-y-8 max-w-5xl mx-auto animate-in fade-in duration-300">
       
       {/* HEADER BANNER */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-2xl">

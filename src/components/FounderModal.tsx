@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Award, Sparkles, Linkedin, Github, Mail, ShieldCheck, Globe, CheckCircle2, Zap } from 'lucide-react';
+import { X, Award, Sparkles, Linkedin, Github, Instagram, Mail, ShieldCheck, Globe, Zap } from 'lucide-react';
 
 interface FounderModalProps {
   isOpen: boolean;
@@ -33,11 +33,13 @@ export const FounderModal: React.FC<FounderModalProps> = ({ isOpen, onClose }) =
           {/* Icon Badge & Core Info Header */}
           <div className="flex flex-col sm:flex-row items-center sm:items-end space-y-4 sm:space-y-0 sm:space-x-5 -mt-14">
             <div className="relative">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 flex items-center justify-center border-4 border-white dark:border-slate-900 shadow-xl text-amber-300">
-                <Award className="w-12 h-12" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 bg-blue-600 text-white p-1.5 rounded-full border-2 border-white dark:border-slate-900 shadow-md">
-                <CheckCircle2 className="w-4 h-4 text-amber-300" />
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 border-white dark:border-slate-900 shadow-xl bg-slate-800">
+                <img
+                  src="https://i.postimg.cc/Z5G0BnZL/Generated-Image-September-14-2025-8-37AM-090126.png"
+                  alt="Siddartha Jamandla"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover object-top"
+                />
               </div>
             </div>
 
@@ -118,7 +120,7 @@ export const FounderModal: React.FC<FounderModalProps> = ({ isOpen, onClose }) =
 
           {/* Connect & Social Actions */}
           <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <a
                 href="https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android"
                 target="_blank"
@@ -129,7 +131,16 @@ export const FounderModal: React.FC<FounderModalProps> = ({ isOpen, onClose }) =
                 <span>LinkedIn</span>
               </a>
               <a
-                href="https://github.com/siddarthajamandla-sketch"
+                href="https://www.instagram.com/ya.its_me_21?igsh=MXJibWtwb2V0bnA1dw==&utm_source=ig_contact_invite"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3.5 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 shadow-xs"
+              >
+                <Instagram className="w-3.5 h-3.5" />
+                <span>Instagram</span>
+              </a>
+              <a
+                href="https://github.com/Siddartha-Jamandla"
                 target="_blank"
                 rel="noreferrer"
                 className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5"
@@ -142,7 +153,7 @@ export const FounderModal: React.FC<FounderModalProps> = ({ isOpen, onClose }) =
                 className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5"
               >
                 <Mail className="w-3.5 h-3.5" />
-                <span>Email Founder</span>
+                <span>Email</span>
               </a>
             </div>
 

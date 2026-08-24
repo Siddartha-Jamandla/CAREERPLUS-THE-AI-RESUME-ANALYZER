@@ -19,6 +19,8 @@ import { JobTrackerBoard } from './components/JobTrackerBoard';
 import { SalaryCalculator } from './components/SalaryCalculator';
 import { InterviewFlashcards } from './components/InterviewFlashcards';
 import { AuthModal } from './components/AuthModal';
+import { AuthView } from './components/AuthView';
+import { FounderView } from './components/FounderView';
 import { UserProfileView } from './components/UserProfileView';
 import { AdminPanel } from './components/AdminPanel';
 import { ReviewsSection } from './components/ReviewsSection';
@@ -55,6 +57,9 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [returnToTab, setReturnToTab] = useState<string>(() => {
+    return sessionStorage.getItem('cp_return_tab') || 'input';
+  });
   const [saveNotification, setSaveNotification] = useState<string | null>(null);
 
   // Daily AI Usage Rate Limiting State
@@ -143,9 +148,40 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  const handleOpenAuth = (sourceTab?: string) => {
+    const previous = sourceTab || (activeTab !== 'auth' && activeTab !== 'founder' ? activeTab : returnToTab || 'input');
+    setReturnToTab(previous);
+    sessionStorage.setItem('cp_return_tab', previous);
+    setIsAuthModalOpen(false);
+    changeTabWithHash('auth');
+  };
+
+  const handleOpenFounder = (sourceTab?: string) => {
+    const previous = sourceTab || (activeTab !== 'founder' && activeTab !== 'auth' ? activeTab : returnToTab || 'input');
+    setReturnToTab(previous);
+    sessionStorage.setItem('cp_return_tab', previous);
+    setIsFounderModalOpen(false);
+    changeTabWithHash('founder');
+  };
+
   const changeTabWithHash = (tab: string) => {
+    // If user opens auth or founder tab from any page, store the current page as return destination
+    if ((tab === 'auth' || tab === 'founder') && activeTab !== 'auth' && activeTab !== 'founder') {
+      setReturnToTab(activeTab);
+      sessionStorage.setItem('cp_return_tab', activeTab);
+    }
+
     // If navigating to a tool feature while analysisResult is null, populate with default sample analysis
-    if (tab !== 'input' && tab !== 'profile' && tab !== 'admin' && tab !== 'reviews' && tab !== 'about' && !analysisResult) {
+    if (
+      tab !== 'input' && 
+      tab !== 'profile' && 
+      tab !== 'admin' && 
+      tab !== 'reviews' && 
+      tab !== 'about' && 
+      tab !== 'auth' && 
+      tab !== 'founder' && 
+      !analysisResult
+    ) {
       setAnalysisResult(DEFAULT_SAMPLE_ANALYSIS);
       if (!currentInput) {
         setCurrentInput({ resumeText: '', targetRole: 'Senior Full Stack Architect' });
@@ -177,11 +213,24 @@ export default function App() {
     }
   };
 
-  const handleLoginSuccess = (user: UserProfile, token: string) => {
+  const handleLoginSuccess = (user: UserProfile, token: string, destination?: string) => {
     setCurrentUser(user);
     setAuthToken(token);
     localStorage.setItem('cp_auth_token', token);
     fetchUsageStatus();
+    setIsAuthModalOpen(false);
+
+    // Target return page where the user clicked the Sign In button
+    const targetPage = destination || returnToTab || sessionStorage.getItem('cp_return_tab') || 'input';
+    const cleanDestination = targetPage === 'auth' ? 'input' : targetPage;
+    
+    setSaveNotification(`Welcome back, ${user.name}! Returning to ${cleanDestination === 'input' ? 'Home' : cleanDestination}...`);
+    setTimeout(() => {
+      setSaveNotification(null);
+    }, 4000);
+
+    // Smooth return to previous page
+    changeTabWithHash(cleanDestination);
   };
 
   const handleLogout = async () => {
@@ -305,7 +354,7 @@ export default function App() {
         hasAnalysis={!!analysisResult}
         onNewAnalysisClick={handleNewAnalysisClick}
         currentUser={currentUser}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onOpenAuthModal={() => handleOpenAuth(activeTab)}
         onLogout={handleLogout}
         usageCount={usageStatus.usageCount}
         dailyLimit={usageStatus.dailyLimit}
@@ -313,7 +362,7 @@ export default function App() {
         onOpenDailyLimitModal={() => setIsDailyLimitModalOpen(true)}
         isDarkMode={isDarkMode}
         onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-        onOpenFounder={() => setIsFounderModalOpen(true)}
+        onOpenFounder={() => handleOpenFounder(activeTab)}
       />
 
       {/* Top Warning Banner if Daily Limit Reached */}
@@ -343,11 +392,25 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Main Content Area bounded cleanly within 1024px */}
+      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 lg:px-6 py-6">
         
-        {/* VIEW 1: USER PROFILE PAGE */}
-        {activeTab === 'profile' ? (
+        {/* VIEW 0: DEDICATED FOUNDER PAGE (RETURNS TO PREVIOUS PAGE) */}
+        {activeTab === 'founder' ? (
+          <FounderView
+            returnTo={returnToTab}
+            onNavigateBack={() => changeTabWithHash(returnToTab !== 'founder' && returnToTab !== 'auth' ? returnToTab : 'input')}
+            onNavigateTab={changeTabWithHash}
+          />
+        ) : activeTab === 'auth' ? (
+          /* VIEW 0.5: DEDICATED SIGN IN / SIGN UP PAGE (RETURNS TO PREVIOUS PAGE) */
+          <AuthView
+            returnTo={returnToTab}
+            onNavigateBack={() => changeTabWithHash(returnToTab !== 'auth' && returnToTab !== 'founder' ? returnToTab : 'input')}
+            onLoginSuccess={handleLoginSuccess}
+          />
+        ) : activeTab === 'profile' ? (
+          /* VIEW 1: USER PROFILE PAGE */
           currentUser ? (
             <UserProfileView
               user={currentUser}
@@ -360,11 +423,11 @@ export default function App() {
           ) : (
             <div className="max-w-md mx-auto py-12 text-center space-y-4">
               <ShieldCheck className="w-12 h-12 text-blue-600 mx-auto" />
-              <h2 className="text-xl font-black text-slate-900">Sign In Required</h2>
-              <p className="text-xs text-slate-500">Please sign in to view and manage your candidate profile.</p>
+              <h2 className="text-xl font-black text-slate-900 dark:text-white">Sign In Required</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Please sign in to view and manage your candidate profile.</p>
               <button
-                onClick={() => setIsAuthModalOpen(true)}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-colors cursor-pointer"
+                onClick={() => handleOpenAuth('profile')}
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-colors cursor-pointer shadow-md"
               >
                 Sign In / Register
               </button>
@@ -375,19 +438,19 @@ export default function App() {
           <AdminPanel
             currentUser={currentUser}
             token={authToken}
-            onOpenAuthModal={() => setIsAuthModalOpen(true)}
+            onOpenAuthModal={() => handleOpenAuth('admin')}
           />
         ) : activeTab === 'reviews' ? (
           /* VIEW 3: COMMUNITY REVIEWS & FEEDBACK */
           <ReviewsSection
             currentUser={currentUser}
-            onOpenAuthModal={() => setIsAuthModalOpen(true)}
+            onOpenAuthModal={() => handleOpenAuth('reviews')}
           />
         ) : activeTab === 'about' ? (
           /* VIEW 4: ABOUT US & FOUNDER SECTION */
           <AboutUsView
             onNavigateTab={changeTabWithHash}
-            onOpenFounderModal={() => setIsFounderModalOpen(true)}
+            onOpenFounderModal={() => handleOpenFounder('about')}
           />
         ) : activeTab === 'voice-interview' ? (
           <VoiceVideoInterviewer analysisData={analysisResult} targetRole={targetRoleName} />
@@ -499,7 +562,10 @@ export default function App() {
         usageCount={usageStatus.usageCount}
         dailyLimit={usageStatus.dailyLimit}
         resetTime={usageStatus.resetTime}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onOpenAuthModal={() => {
+          setIsDailyLimitModalOpen(false);
+          handleOpenAuth(activeTab);
+        }}
       />
 
       {/* Founder Spotlight Modal */}
@@ -513,7 +579,7 @@ export default function App() {
         onNavigateTab={changeTabWithHash}
         isAdmin={currentUser?.isAdmin}
         onOpenLegal={handleOpenLegalModal}
-        onOpenFounder={() => setIsFounderModalOpen(true)}
+        onOpenFounder={() => handleOpenFounder(activeTab)}
       />
     </div>
   );

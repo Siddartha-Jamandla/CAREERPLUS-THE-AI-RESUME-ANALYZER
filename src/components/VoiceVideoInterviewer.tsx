@@ -289,7 +289,7 @@ export const VoiceVideoInterviewer: React.FC<VoiceVideoInterviewerProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12">
+    <div className="max-w-5xl mx-auto space-y-8 pb-12">
       {/* HEADER HERO */}
       <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-2xl relative overflow-hidden border border-blue-800/40">
         <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>

@@ -25,6 +25,7 @@ import {
   CheckSquare
 } from 'lucide-react';
 import { ResumeAnalysisResult, JobOpening, FreeCourse, UpskillRoadmapSkill, PortfolioProjectIdea } from '../types';
+import { DEFAULT_SAMPLE_ANALYSIS } from '../utils/defaultAnalysis';
 
 interface JobsAndUpskillHubProps {
   analysis: ResumeAnalysisResult;
@@ -38,6 +39,8 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
   const [activeTab, setActiveTab] = useState<'jobs' | 'courses' | 'projects' | 'roadmaps'>('projects');
   const [jobSearchFilter, setJobSearchFilter] = useState<string>('');
   const [courseSearchFilter, setCourseSearchFilter] = useState<string>('');
+  const [projectSearchFilter, setProjectSearchFilter] = useState<string>('');
+  const [projectDifficultyFilter, setProjectDifficultyFilter] = useState<string>('All');
   const [copiedBullet, setCopiedBullet] = useState<string | null>(null);
 
   const handleCopy = (text: string, id: string) => {
@@ -46,85 +49,16 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
     setTimeout(() => setCopiedBullet(null), 2000);
   };
 
-  const portfolioProjects: PortfolioProjectIdea[] = (analysis.portfolioProjectIdeas && analysis.portfolioProjectIdeas.length > 0)
+  const rawProjects = (analysis.portfolioProjectIdeas && analysis.portfolioProjectIdeas.length > 0)
     ? analysis.portfolioProjectIdeas
-    : [
-      {
-        title: `Production-Ready ${targetRole} Enterprise Platform with Microservices & Caching`,
-        difficulty: 'Advanced',
-        estimatedHours: '20-30 Hours',
-        targetRoleValue: `Demonstrates high-scale system engineering, fault tolerance, and API performance optimization directly relevant to ${targetRole} hiring managers.`,
-        keySkillsDemonstrated: ["System Architecture", "API Engineering", "Caching & Performance", "CI/CD & Docker"],
-        techStack: ["TypeScript", "Node.js / Express", "Redis Caching", "Docker", "PostgreSQL / MongoDB"],
-        freeResourcesAndDocs: [
-          { name: "Node.js Official Documentation & Best Practices", url: "https://nodejs.org/en/docs/", platform: "Official Docs" },
-          { name: "freeCodeCamp Backend & Microservices Certification", url: "https://www.freecodecamp.org/learn/back-end-development-and-apis/", platform: "freeCodeCamp" },
-          { name: "Redis Caching Strategy & Architecture Guide", url: "https://redis.io/docs/latest/develop/use/", platform: "Redis Docs" }
-        ],
-        stepByStepRoadmap: [
-          "Phase 1: Design RESTful / GraphQL schemas and entity-relationship diagrams.",
-          "Phase 2: Implement Redis caching layer to achieve sub-50ms API response times.",
-          "Phase 3: Containerize application services using Docker and multi-stage builds.",
-          "Phase 4: Setup GitHub Actions CI/CD pipeline with automated testing and continuous deployment."
-        ],
-        githubStarterTemplateUrl: "https://github.com/topics/fullstack-starter-template",
-        resumeBulletPointsToInclude: [
-          `Architected scalable enterprise platform handling 10,000+ API requests/min using Node.js, TypeScript, and Redis caching.`,
-          `Engineered Redis memory caching strategy reducing database query latency by 68% and boosting sub-50ms response rates.`,
-          `Containerized multi-service environment with Docker and established GitHub Actions CI/CD for zero-downtime deployment.`
-        ]
-      },
-      {
-        title: `AI-Powered Intelligence Dashboard with Real-Time Analytics`,
-        difficulty: 'Intermediate',
-        estimatedHours: '15-25 Hours',
-        targetRoleValue: `Demonstrates modern AI API integration, real-time data streaming, and full-stack user experience design.`,
-        keySkillsDemonstrated: ["LLM API Integration", "State Management", "Tailwind CSS & UI UX", "Real-Time Data"],
-        techStack: ["React", "TypeScript", "Gemini / OpenAI API", "Tailwind CSS", "Vite"],
-        freeResourcesAndDocs: [
-          { name: "Google Gemini API Developer Documentation", url: "https://ai.google.dev/docs", platform: "Google AI" },
-          { name: "React + Vite Production Guide", url: "https://vite.dev/guide/", platform: "Vite Docs" },
-          { name: "Tailwind CSS Master Reference", url: "https://tailwindcss.com/docs", platform: "Tailwind Docs" }
-        ],
-        stepByStepRoadmap: [
-          "Phase 1: Configure Vite React TypeScript frontend with Tailwind styling and dark/light responsive layouts.",
-          "Phase 2: Integrate Gemini AI SDK server-side endpoint with structured JSON response schema.",
-          "Phase 3: Build interactive data visualization components using Recharts / Lucide icons.",
-          "Phase 4: Implement persistent localStorage / database state for user sessions and export options."
-        ],
-        githubStarterTemplateUrl: "https://github.com/topics/react-starter",
-        resumeBulletPointsToInclude: [
-          `Developed AI-powered analytics dashboard in React/TypeScript, processing natural language queries with sub-second turnaround.`,
-          `Integrated Gemini API server-side proxy layer ensuring API key security and streaming real-time analytics data.`,
-          `Designed responsive UI with Tailwind CSS resulting in 98+ Lighthouse performance and accessibility scores.`
-        ]
-      },
-      {
-        title: `Automated Cloud Pipeline & Infrastructure Monitoring Tool`,
-        difficulty: 'Intermediate',
-        estimatedHours: '12-18 Hours',
-        targetRoleValue: `Highlights cloud readiness, DevOps automation, and production observability.`,
-        keySkillsDemonstrated: ["Cloud Computing", "DevOps & Automation", "System Monitoring", "Security Best Practices"],
-        techStack: ["AWS / Google Cloud", "Terraform / CloudFormation", "GitHub Actions", "Python / Node.js"],
-        freeResourcesAndDocs: [
-          { name: "Google Cloud Skills Boost Free Labs", url: "https://www.cloudskillsboost.google/", platform: "Google Cloud" },
-          { name: "AWS Free Tier & Developer Documentation", url: "https://aws.amazon.com/free/", platform: "AWS" },
-          { name: "HashiCorp Terraform Free Tutorials", url: "https://developer.hashicorp.com/terraform/tutorials", platform: "HashiCorp" }
-        ],
-        stepByStepRoadmap: [
-          "Phase 1: Provision infrastructure as code (IaC) using Terraform scripts on AWS / GCP.",
-          "Phase 2: Build automated monitoring service to ping endpoint health and track memory / CPU usage.",
-          "Phase 3: Configure alert webhooks to send instant notifications upon threshold breach.",
-          "Phase 4: Document architectural trade-offs in GitHub README with topology diagrams."
-        ],
-        githubStarterTemplateUrl: "https://github.com/topics/devops-template",
-        resumeBulletPointsToInclude: [
-          `Provisioned cloud infrastructure as code using Terraform on GCP/AWS, reducing manual deployment setup by 80%.`,
-          `Built automated health monitoring pipeline with webhook alerts, achieving 99.9% uptime tracking accuracy.`,
-          `Automated CI/CD security scanning and dependency checks via GitHub Actions to prevent vulnerabilities.`
-        ]
-      }
-    ];
+    : (DEFAULT_SAMPLE_ANALYSIS.portfolioProjectIdeas || []);
+
+  const portfolioProjects: PortfolioProjectIdea[] = rawProjects.filter(p => {
+    const matchesDiff = projectDifficultyFilter === 'All' || p.difficulty.toLowerCase() === projectDifficultyFilter.toLowerCase();
+    const query = projectSearchFilter.toLowerCase();
+    const matchesQuery = !query || p.title.toLowerCase().includes(query) || p.techStack.some(t => t.toLowerCase().includes(query)) || p.keySkillsDemonstrated.some(s => s.toLowerCase().includes(query));
+    return matchesDiff && matchesQuery;
+  });
 
   const jobsList: JobOpening[] = (analysis.recommendedJobs && analysis.recommendedJobs.length >= 10) ? analysis.recommendedJobs : [
     {
@@ -678,9 +612,42 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
             <div className="flex items-center space-x-3">
               <Zap className="w-5 h-5 text-amber-600 shrink-0 fill-amber-500" />
               <div className="text-xs">
-                <span className="font-extrabold block">How Projects Increase Resume Weight:</span>
-                <span>Adding 1-2 production-grade projects with metrics (e.g. latency reduction, caching, deployment) instantly compensates for experience gaps in recruiter screens.</span>
+                <span className="font-extrabold block">How 10 Suggested Projects Increase Resume Weight:</span>
+                <span>Adding 1-2 production-grade projects with metrics (e.g. latency reduction, caching, AI/LLM integration) instantly compensates for experience gaps in recruiter screens.</span>
               </div>
+            </div>
+            <span className="shrink-0 px-3 py-1 bg-amber-100/80 rounded-full font-black text-xs text-amber-950">
+              {rawProjects.length} Projects Suggested
+            </span>
+          </div>
+
+          {/* Search & Difficulty Filter Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+            <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+              {['All', 'Advanced', 'Intermediate', 'Beginner'].map((diff) => (
+                <button
+                  key={diff}
+                  onClick={() => setProjectDifficultyFilter(diff)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    projectDifficultyFilter === diff
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {diff === 'All' ? `All (${rawProjects.length})` : diff}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full sm:w-64">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={projectSearchFilter}
+                onChange={(e) => setProjectSearchFilter(e.target.value)}
+                placeholder="Filter by tech or skill..."
+                className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+              />
             </div>
           </div>
 

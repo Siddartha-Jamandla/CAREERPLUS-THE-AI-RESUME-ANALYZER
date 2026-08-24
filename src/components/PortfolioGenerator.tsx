@@ -24,6 +24,7 @@ import {
   Settings
 } from 'lucide-react';
 import { ResumeAnalysisResult } from '../types';
+import { DEFAULT_SAMPLE_ANALYSIS } from '../utils/defaultAnalysis';
 
 interface PortfolioGeneratorProps {
   analysisData?: ResumeAnalysisResult | null;
@@ -45,25 +46,16 @@ export const PortfolioGenerator: React.FC<PortfolioGeneratorProps> = ({ analysis
     title: currentRole,
     bio: 'Passionate software engineer crafting scalable web applications, distributed cloud services, and performant user experiences.',
     email: 'j.siddartha@example.com',
-    github: 'https://github.com/siddarthajamandla-sketch',
+    github: 'https://github.com/Siddartha-Jamandla',
     linkedin: 'https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android',
     customSlug: candidateName.toLowerCase().replace(/\s+/g, '-'),
     seoTitle: `${candidateName} - ${currentRole} | Portfolio & Web Resume`,
     seoDescription: `Explore ${candidateName}'s software engineering portfolio, featured cloud projects, technical skills, and career timeline.`
   });
 
-  const portfolioProjects = analysisData?.portfolioProjectIdeas || [
-    {
-      title: 'Distributed Cloud AI Analytics Pipeline',
-      techStack: ['TypeScript', 'React', 'Node.js', 'Redis', 'Docker'],
-      description: 'Engineered a multi-tenant real-time data processing pipeline handling 10M+ daily events with sub-50ms latency.'
-    },
-    {
-      title: 'Enterprise Microservices Gateway',
-      techStack: ['Go', 'Kubernetes', 'GraphQL', 'PostgreSQL'],
-      description: 'Designed unified authentication and rate-limiting gateway for 15+ internal services, improving response times by 40%.'
-    }
-  ];
+  const portfolioProjects = (analysisData?.portfolioProjectIdeas && analysisData.portfolioProjectIdeas.length > 0)
+    ? analysisData.portfolioProjectIdeas
+    : (DEFAULT_SAMPLE_ANALYSIS.portfolioProjectIdeas || []);
 
   const detectedSkills = analysisData?.extractedDetails?.detectedSkills || [
     'React', 'TypeScript', 'Node.js', 'Express', 'Tailwind CSS', 'Docker', 'AWS', 'PostgreSQL', 'GraphQL', 'System Architecture'
@@ -91,7 +83,7 @@ export const PortfolioGenerator: React.FC<PortfolioGeneratorProps> = ({ analysis
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12">
+    <div className="max-w-5xl mx-auto space-y-8 pb-12">
       {/* HEADER HERO */}
       <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 rounded-3xl p-6 sm:p-8 text-white shadow-2xl relative overflow-hidden border border-blue-800/40">
         <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>

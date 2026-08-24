@@ -7,7 +7,11 @@ import {
   Mic, 
   Star, 
   ArrowUpRight,
-  Award
+  Award,
+  Instagram,
+  Linkedin,
+  Github,
+  Mail
 } from 'lucide-react';
 import { CareerPlusLogo } from './CareerPlusLogo';
 
@@ -26,7 +30,7 @@ export const Footer: React.FC<FooterProps> = ({
 }) => {
   return (
     <footer className="bg-slate-900 border-t border-slate-800 text-slate-300 pt-12 pb-8 mt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 space-y-10">
         
         {/* TOP BRAND & COPYRIGHT BANNER GRID */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-slate-800">
@@ -41,30 +45,76 @@ export const Footer: React.FC<FooterProps> = ({
               Enterprise candidate career intelligence powered by CAREER PLUS+ AI Engine. Turn resume gaps into competitive hiring advantages.
             </p>
 
-            {/* FOUNDER SPOTLIGHT BADGE */}
+            {/* FOUNDER SPOTLIGHT BADGE & SOCIAL LINKS */}
             {onOpenFounder && (
-              <button
-                onClick={onOpenFounder}
-                className="w-full p-3 bg-slate-800/90 hover:bg-slate-800 border border-slate-700/80 rounded-2xl flex items-center space-x-3 transition-colors text-left cursor-pointer group shadow-sm"
-              >
-                <div className="w-11 h-11 rounded-xl bg-blue-900/80 border border-blue-500/50 flex items-center justify-center text-amber-300 shrink-0 group-hover:scale-105 transition-transform">
-                  <Award className="w-6 h-6" />
+              <div className="space-y-2">
+                <button
+                  onClick={onOpenFounder}
+                  className="w-full p-3 bg-slate-800/90 hover:bg-slate-800 border border-slate-700/80 rounded-2xl flex items-center space-x-3 transition-colors text-left cursor-pointer group shadow-sm"
+                >
+                  <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-blue-500/60 shadow-md shrink-0 bg-slate-800 group-hover:scale-105 transition-transform">
+                    <img
+                      src="https://i.postimg.cc/Z5G0BnZL/Generated-Image-September-14-2025-8-37AM-090126.png"
+                      alt="Siddartha Jamandla"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] font-extrabold text-blue-400 uppercase tracking-wider flex items-center space-x-1">
+                      <Award className="w-3 h-3 text-amber-300 inline" />
+                      <span>Meet the Founder</span>
+                    </span>
+                    <h5 className="text-xs font-black text-white truncate">
+                      Siddartha Jamandla
+                    </h5>
+                    <p className="text-[10px] text-slate-300 truncate font-semibold">
+                      AIML Engineer & AI Systems Architect
+                    </p>
+                    <p className="text-[9px] text-slate-400 truncate">
+                      Hyderabad, Telangana, India (500013)
+                    </p>
+                  </div>
+                </button>
+
+                {/* Founder Quick Social Connects */}
+                <div className="flex items-center space-x-1.5 px-1">
+                  <a
+                    href="https://www.instagram.com/ya.its_me_21?igsh=MXJibWtwb2V0bnA1dw==&utm_source=ig_contact_invite"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Instagram: @ya.its_me_21"
+                    className="p-1.5 bg-slate-800 hover:bg-gradient-to-r hover:from-pink-600 hover:to-rose-600 border border-slate-700 rounded-lg text-slate-300 hover:text-white transition-all text-[11px] flex items-center space-x-1"
+                  >
+                    <Instagram className="w-3.5 h-3.5" />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="LinkedIn Profile"
+                    className="p-1.5 bg-slate-800 hover:bg-blue-600 border border-slate-700 rounded-lg text-slate-300 hover:text-white transition-all text-[11px] flex items-center space-x-1"
+                  >
+                    <Linkedin className="w-3.5 h-3.5" />
+                  </a>
+                  <a
+                    href="https://github.com/Siddartha-Jamandla"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="GitHub Portfolio"
+                    className="p-1.5 bg-slate-800 hover:bg-purple-600 border border-slate-700 rounded-lg text-slate-300 hover:text-white transition-all text-[11px] flex items-center space-x-1"
+                  >
+                    <Github className="w-3.5 h-3.5" />
+                  </a>
+                  <a
+                    href="mailto:jamandlasiddartha@gmail.com"
+                    title="Email: jamandlasiddartha@gmail.com"
+                    className="p-1.5 bg-slate-800 hover:bg-emerald-600 border border-slate-700 rounded-lg text-slate-300 hover:text-white transition-all text-[11px] flex items-center space-x-1"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                  </a>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-extrabold text-blue-400 uppercase tracking-wider block">
-                    Meet the Founder
-                  </span>
-                  <h5 className="text-xs font-black text-white truncate">
-                    Siddartha Jamandla
-                  </h5>
-                  <p className="text-[10px] text-slate-300 truncate font-semibold">
-                    AIML Engineer & AI Systems Architect
-                  </p>
-                  <p className="text-[9px] text-slate-400 truncate">
-                    Hyderabad, Telangana, India (500013)
-                  </p>
-                </div>
-              </button>
+              </div>
             )}
 
             {/* COPYRIGHTS ARE RESERVED BADGE */}

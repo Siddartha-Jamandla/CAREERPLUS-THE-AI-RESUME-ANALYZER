@@ -219,7 +219,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
   };
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-8 max-w-5xl mx-auto">
       {/* Cover Header Banner */}
       <div className="relative bg-slate-900 rounded-3xl p-6 sm:p-8 text-white overflow-hidden shadow-xl border border-slate-800">
         <div className="absolute right-0 top-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />

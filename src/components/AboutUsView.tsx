@@ -6,6 +6,7 @@ import {
   Mail, 
   Linkedin, 
   Github, 
+  Instagram,
   CheckCircle2, 
   Zap, 
   ShieldCheck, 
@@ -54,7 +55,7 @@ export const AboutUsView: React.FC<AboutUsViewProps> = ({
   ];
 
   return (
-    <div className="space-y-12 max-w-6xl mx-auto pb-12 animate-in fade-in duration-200">
+    <div className="space-y-12 max-w-5xl mx-auto pb-12 animate-in fade-in duration-200">
       
       {/* TOP HERO BANNER */}
       <div className="relative rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-8 sm:p-12 text-white overflow-hidden shadow-2xl border border-slate-800">
@@ -98,8 +99,13 @@ export const AboutUsView: React.FC<AboutUsViewProps> = ({
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl space-y-8 relative overflow-hidden">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center space-x-5">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-700 to-slate-900 flex items-center justify-center text-amber-300 border-4 border-white dark:border-slate-800 shadow-xl shrink-0">
-              <Award className="w-10 h-10 sm:w-12 sm:h-12" />
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-4 border-blue-500/30 dark:border-blue-400/30 shadow-xl shrink-0 bg-slate-800">
+              <img
+                src="https://i.postimg.cc/Z5G0BnZL/Generated-Image-September-14-2025-8-37AM-090126.png"
+                alt="Siddartha Jamandla - Founder"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover object-top"
+              />
             </div>
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
@@ -121,29 +127,45 @@ export const AboutUsView: React.FC<AboutUsViewProps> = ({
           </div>
 
           <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <button
+              onClick={onOpenFounderModal}
+              className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-extrabold text-xs rounded-xl shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+            >
+              <Award className="w-3.5 h-3.5 text-amber-200" />
+              <span>Full Founder Page</span>
+            </button>
             <a
               href="mailto:jamandlasiddartha@gmail.com"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer shadow-xs"
+              className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer shadow-xs"
             >
               <Mail className="w-3.5 h-3.5" />
-              <span>jamandlasiddartha@gmail.com</span>
+              <span>Email</span>
             </a>
             <a
               href="https://www.linkedin.com/in/siddartha-jamandla-97350b384?utm_source=share_via&utm_content=profile&utm_medium=member_android"
               target="_blank"
               rel="noreferrer"
-              className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer"
+              className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer"
             >
-              <Linkedin className="w-3.5 h-3.5" />
+              <Linkedin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span>LinkedIn</span>
             </a>
             <a
-              href="https://github.com/siddarthajamandla-sketch"
+              href="https://www.instagram.com/ya.its_me_21?igsh=MXJibWtwb2V0bnA1dw==&utm_source=ig_contact_invite"
               target="_blank"
               rel="noreferrer"
-              className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer"
+              className="px-3 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer shadow-xs"
             >
-              <Github className="w-3.5 h-3.5" />
+              <Instagram className="w-3.5 h-3.5 text-white" />
+              <span>Instagram</span>
+            </a>
+            <a
+              href="https://github.com/Siddartha-Jamandla"
+              target="_blank"
+              rel="noreferrer"
+              className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer"
+            >
+              <Github className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
               <span>GitHub</span>
             </a>
           </div>

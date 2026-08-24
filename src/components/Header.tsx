@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Home,
   Sparkles, 
-  FileText, 
   Target, 
   ShieldCheck, 
   TrendingUp, 
@@ -70,123 +69,155 @@ export const Header: React.FC<HeaderProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   const isAdmin = currentUser?.isAdmin || currentUser?.email.toLowerCase() === 'jamandlasiddartha@gmail.com';
 
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setActiveDropdown(null);
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const primaryNav = [
     { id: 'input', label: 'Home', icon: Home },
-    { id: 'jobs', label: 'Jobs & Projects', icon: Briefcase },
+    { id: 'jobs', label: 'Jobs', icon: Briefcase },
     { id: 'chat', label: 'AI Coach', icon: MessageSquare },
     { id: 'reviews', label: 'Reviews', icon: Star },
-    { id: 'about', label: 'About Us', icon: Info },
+    { id: 'about', label: 'About', icon: Info },
   ];
 
   const interviewTools = [
-    { id: 'interviewer', label: 'Interviewer Report', icon: UserCheck },
-    { id: 'mock', label: 'Mock Interview Room', icon: Mic },
-    { id: 'voice-interview', label: 'Live Voice & Video AI', icon: Video },
-    { id: 'interview', label: 'Interview Prep Questions', icon: HelpCircle },
-    { id: 'flashcards', label: 'Flashcard Drills', icon: HelpCircle },
-    { id: 'community-hub', label: 'Alumni & Peer Network', icon: Users },
+    { id: 'voice-interview', label: 'Live AI Voice & Video', desc: 'Real-time webcam/mic mock interview simulation', icon: Video },
+    { id: 'mock', label: 'Mock Interview Room', desc: 'Custom questions with AI feedback & scoring', icon: Mic },
+    { id: 'interview', label: 'Interview Prep Questions', desc: 'Top behavioral & technical question drills', icon: HelpCircle },
+    { id: 'interviewer', label: 'Interviewer Assessment', desc: 'Recruiter perspective analysis & gaps', icon: UserCheck },
+    { id: 'flashcards', label: 'Flashcard Drills', desc: 'Rapid interview concept practice', icon: HelpCircle },
+    { id: 'community-hub', label: 'Alumni Network', desc: 'Connect with verified candidate peers', icon: Users },
   ];
 
   const resumeTools = [
-    { id: 'builder', label: 'Resume Builder', icon: Edit3 },
-    { id: 'bullets', label: 'Bullet Rewrite Studio', icon: Edit3 },
-    { id: 'portfolio', label: 'AI Web Portfolio Generator', icon: Globe },
-    { id: 'skill-challenges', label: 'Skill Challenges & Badges', icon: Award },
-    { id: 'cover', label: 'Cover Letter', icon: Mail },
-    { id: 'linkedin', label: 'LinkedIn Optimizer', icon: Share2 },
-    { id: 'ats', label: 'ATS Checker', icon: ShieldCheck },
-    { id: 'skills', label: 'Skill Matrix', icon: Target },
+    { id: 'builder', label: 'Resume Builder', desc: 'Clean, ATS-ready formatted resume editor', icon: Edit3 },
+    { id: 'ats', label: 'ATS Score Checker', desc: 'Keyword match & screening compatibility', icon: ShieldCheck },
+    { id: 'bullets', label: 'Bullet Rewrite Studio', desc: 'Transform bullets using Google XYZ formula', icon: Edit3 },
+    { id: 'portfolio', label: 'AI Web Portfolio', desc: 'Instant developer portfolio with live preview', icon: Globe },
+    { id: 'cover', label: 'Cover Letter Generator', desc: 'Targeted letters tailored to job listings', icon: Mail },
+    { id: 'skills', label: 'Skill Gap Matrix', desc: 'Visual benchmark vs job requirements', icon: Target },
+    { id: 'skill-challenges', label: 'Skill Badges & Tests', desc: 'Take technical quizzes & earn badges', icon: Award },
+    { id: 'linkedin', label: 'LinkedIn Optimizer', desc: 'Headline & summary booster', icon: Share2 },
   ];
 
   const careerTools = [
-    { id: 'career', label: 'Career Pathways', icon: TrendingUp },
-    { id: 'salary', label: 'Salary Evaluator', icon: Calculator },
-    { id: 'offer-evaluator', label: 'Offer & Equity Evaluator', icon: Calculator },
-    { id: 'tracker', label: 'Job Tracker CRM', icon: Briefcase },
-    { id: 'extension', label: 'Job Extension Auto-Sync', icon: Puzzle },
+    { id: 'career', label: 'Career Pathways', desc: 'Explore career roadmaps & progressions', icon: TrendingUp },
+    { id: 'salary', label: 'Salary Evaluator', desc: 'Market rates, percentiles & compensation', icon: Calculator },
+    { id: 'offer-evaluator', label: 'Offer & Equity Evaluator', desc: 'Compare offers, base salary & stock equity', icon: Calculator },
+    { id: 'tracker', label: 'Job Tracker CRM', desc: 'Kanban board for all your applications', icon: Briefcase },
+    { id: 'extension', label: 'Job Extension Sync', desc: '1-click job auto-import helper', icon: Puzzle },
   ];
 
   const handleNavClick = (tabId: string) => {
     setActiveTab(tabId);
     setMobileMenuOpen(false);
     setActiveDropdown(null);
+    setUserDropdownOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const isInterviewActive = interviewTools.some(t => t.id === activeTab);
+  const isResumeActive = resumeTools.some(t => t.id === activeTab);
+  const isCareerActive = careerTools.some(t => t.id === activeTab);
+
   return (
-    <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-xs transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-xs transition-colors duration-200" ref={navRef}>
+      {/* Centered container with clean 1024px maximum width */}
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div className="flex items-center justify-between h-16 gap-2">
           
-          {/* Logo & Branding - Home Navigation Action */}
+          {/* Logo & Direct Home Link */}
           <button
             type="button"
             onClick={() => handleNavClick('input')}
-            title="CAREER PLUS+ Home - Click to return to Home Page"
+            title="CAREER PLUS+ Home"
             aria-label="CAREER PLUS+ Home"
-            className="flex items-center space-x-2 text-left p-1 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500/40 cursor-pointer group"
+            className="flex items-center space-x-1.5 text-left p-1 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500/40 cursor-pointer group shrink-0"
           >
             <CareerPlusLogo size="md" showText={true} />
-            <span className="hidden xl:inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[10px] font-extrabold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/80 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/80 transition-colors">
-              <Home className="w-2.5 h-2.5" />
-              <span>Home</span>
-            </span>
           </button>
 
-          {/* DESKTOP MAIN NAVIGATION MENU BAR */}
-          <nav className="hidden lg:flex items-center space-x-1">
-            {/* Primary Navigation Buttons */}
-            {primaryNav.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                  className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
+          {/* DESKTOP MAIN NAVIGATION MENU (Clean, simple, easily understandable tabs) */}
+          <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold">
+            {/* Home */}
+            <button
+              onClick={() => handleNavClick('input')}
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                activeTab === 'input'
+                  ? 'bg-blue-600 text-white font-bold shadow-xs'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Home className="w-3.5 h-3.5" />
+              <span>Home</span>
+            </button>
+
+            {/* Jobs */}
+            <button
+              onClick={() => handleNavClick('jobs')}
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                activeTab === 'jobs'
+                  ? 'bg-blue-600 text-white font-bold shadow-xs'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Briefcase className="w-3.5 h-3.5" />
+              <span>Jobs</span>
+            </button>
 
             {/* Dropdown 1: Interview Hub */}
-            <div className="relative" onMouseLeave={() => setActiveDropdown(null)}>
+            <div className="relative">
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'interview' ? null : 'interview')}
-                className={`flex items-center space-x-1 px-2.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  ['interviewer', 'mock', 'voice-interview', 'interview', 'flashcards', 'community-hub'].includes(activeTab)
-                    ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                  isInterviewActive
+                    ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
                 <Mic className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                <span>Interview Hub</span>
-                <ChevronDown className="w-3 h-3" />
+                <span>Interview</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${activeDropdown === 'interview' ? 'rotate-180' : ''}`} />
               </button>
 
               {activeDropdown === 'interview' && (
-                <div className="absolute top-full left-0 mt-1 w-60 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
+                <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in duration-150">
+                  <div className="px-2 py-1 mb-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    Interview Preparation & Practice
+                  </div>
                   {interviewTools.map((t) => {
                     const Icon = t.icon;
+                    const isActive = activeTab === t.id;
                     return (
                       <button
                         key={t.id}
                         onClick={() => handleNavClick(t.id)}
-                        className={`w-full text-left px-4 py-2 text-xs font-bold flex items-center space-x-2 transition-colors cursor-pointer ${
-                          activeTab === t.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        className={`w-full text-left p-2 rounded-xl transition-colors flex items-start space-x-2.5 cursor-pointer ${
+                          isActive 
+                            ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold' 
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                         }`}
                       >
-                        <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                        <span className="truncate">{t.label}</span>
+                        <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                          <Icon className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-bold leading-tight">{t.label}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">{t.desc}</div>
+                        </div>
                       </button>
                     );
                   })}
@@ -195,34 +226,45 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Dropdown 2: Resume Tools */}
-            <div className="relative" onMouseLeave={() => setActiveDropdown(null)}>
+            <div className="relative">
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'resume' ? null : 'resume')}
-                className={`flex items-center space-x-1 px-2.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  ['builder', 'bullets', 'portfolio', 'skill-challenges', 'cover', 'linkedin', 'ats', 'skills'].includes(activeTab)
-                    ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                  isResumeActive
+                    ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
                 <Edit3 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                <span>Resume Tools</span>
-                <ChevronDown className="w-3 h-3" />
+                <span>Resume</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${activeDropdown === 'resume' ? 'rotate-180' : ''}`} />
               </button>
 
               {activeDropdown === 'resume' && (
-                <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
+                <div className="absolute top-full left-0 mt-2 w-76 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in duration-150 max-h-[80vh] overflow-y-auto">
+                  <div className="px-2 py-1 mb-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    Resume Building & Optimization
+                  </div>
                   {resumeTools.map((t) => {
                     const Icon = t.icon;
+                    const isActive = activeTab === t.id;
                     return (
                       <button
                         key={t.id}
                         onClick={() => handleNavClick(t.id)}
-                        className={`w-full text-left px-4 py-2 text-xs font-bold flex items-center space-x-2 transition-colors cursor-pointer ${
-                          activeTab === t.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        className={`w-full text-left p-2 rounded-xl transition-colors flex items-start space-x-2.5 cursor-pointer ${
+                          isActive 
+                            ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold' 
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                         }`}
                       >
-                        <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                        <span className="truncate">{t.label}</span>
+                        <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                          <Icon className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-bold leading-tight">{t.label}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">{t.desc}</div>
+                        </div>
                       </button>
                     );
                   })}
@@ -230,35 +272,46 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* Dropdown 3: Career & Salary */}
-            <div className="relative" onMouseLeave={() => setActiveDropdown(null)}>
+            {/* Dropdown 3: Career Growth */}
+            <div className="relative">
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'career' ? null : 'career')}
-                className={`flex items-center space-x-1 px-2.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  ['career', 'salary', 'offer-evaluator', 'tracker', 'extension'].includes(activeTab)
-                    ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                  isCareerActive
+                    ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
                 <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                <span>Career Growth</span>
-                <ChevronDown className="w-3 h-3" />
+                <span>Career</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${activeDropdown === 'career' ? 'rotate-180' : ''}`} />
               </button>
 
               {activeDropdown === 'career' && (
-                <div className="absolute top-full left-0 mt-1 w-60 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in duration-150">
+                <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in duration-150">
+                  <div className="px-2 py-1 mb-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    Career Progression & Compensation
+                  </div>
                   {careerTools.map((t) => {
                     const Icon = t.icon;
+                    const isActive = activeTab === t.id;
                     return (
                       <button
                         key={t.id}
                         onClick={() => handleNavClick(t.id)}
-                        className={`w-full text-left px-4 py-2 text-xs font-bold flex items-center space-x-2 transition-colors cursor-pointer ${
-                          activeTab === t.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        className={`w-full text-left p-2 rounded-xl transition-colors flex items-start space-x-2.5 cursor-pointer ${
+                          isActive 
+                            ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold' 
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                         }`}
                       >
-                        <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                        <span className="truncate">{t.label}</span>
+                        <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                          <Icon className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-bold leading-tight">{t.label}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">{t.desc}</div>
+                        </div>
                       </button>
                     );
                   })}
@@ -266,118 +319,96 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* USER PROFILE PAGE BUTTON */}
-            {currentUser && (
-              <button
-                onClick={() => handleNavClick('profile')}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'profile'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>My Profile</span>
-              </button>
-            )}
+            {/* AI Coach */}
+            <button
+              onClick={() => handleNavClick('chat')}
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                activeTab === 'chat'
+                  ? 'bg-blue-600 text-white font-bold shadow-xs'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              <span>Coach</span>
+            </button>
 
-            {/* ADMIN PANEL BUTTON (If Super Admin) */}
-            {isAdmin && (
-              <button
-                onClick={() => handleNavClick('admin')}
-                className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  activeTab === 'admin'
-                    ? 'bg-amber-600 text-white shadow-xs'
-                    : 'bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/60'
-                }`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-600 fill-amber-300" />
-                <span>Admin</span>
-              </button>
-            )}
+            {/* Reviews */}
+            <button
+              onClick={() => handleNavClick('reviews')}
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                activeTab === 'reviews'
+                  ? 'bg-blue-600 text-white font-bold shadow-xs'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Star className="w-3.5 h-3.5" />
+              <span>Reviews</span>
+            </button>
+
+            {/* About */}
+            <button
+              onClick={() => handleNavClick('about')}
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                activeTab === 'about'
+                  ? 'bg-blue-600 text-white font-bold shadow-xs'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Info className="w-3.5 h-3.5" />
+              <span>About</span>
+            </button>
           </nav>
 
           {/* RIGHT ACTION CONTROLS */}
-          <div className="flex items-center space-x-2">
-
-            {/* FOUNDER SPOTLIGHT BADGE BUTTON */}
-            {onOpenFounder && (
-              <button
-                onClick={onOpenFounder}
-                title="Meet Founder Siddartha Jamandla"
-                className="hidden xl:flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-blue-900 to-slate-900 hover:from-blue-800 hover:to-slate-800 text-white rounded-xl transition-all cursor-pointer border border-blue-500/40 shadow-xs group"
-              >
-                <Award className="w-4 h-4 text-amber-300 group-hover:scale-110 transition-transform" />
-                <span className="text-[11px] font-extrabold text-amber-300">
-                  Founder Siddartha Jamandla
-                </span>
-              </button>
-            )}
-
-            {/* DARK / LIGHT MODE 3D TOGGLE BUTTON */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+            {/* DARK / LIGHT MODE TOGGLE */}
             {onToggleDarkMode && (
               <button
                 onClick={onToggleDarkMode}
                 title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 rounded-xl transition-all cursor-pointer border border-slate-200 dark:border-slate-700 shadow-xs flex items-center justify-center transform active:scale-95"
+                className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 rounded-lg transition-all cursor-pointer border border-slate-200 dark:border-slate-700 shadow-xs flex items-center justify-center"
               >
                 {isDarkMode ? <Sun className="w-4 h-4 text-amber-400 fill-amber-300" /> : <Moon className="w-4 h-4 text-slate-700" />}
               </button>
             )}
 
-            {/* DAILY AI USAGE RATE LIMIT BADGE */}
+            {/* DAILY AI USAGE BADGE */}
             <button
               onClick={onOpenDailyLimitModal}
-              title={isAdmin ? 'Super Admin: Unlimited Daily AI Access' : limitReached ? 'Daily Limit Finished! Click to view details.' : `${dailyLimit - usageCount} AI Uses Remaining Today`}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer border ${
+              title={isAdmin ? 'Super Admin: Unlimited Access' : limitReached ? 'Daily Limit Finished' : `${dailyLimit - usageCount} AI Uses Left Today`}
+              className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer border ${
                 isAdmin
-                  ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-800 hover:bg-amber-100'
+                  ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-800'
                   : limitReached
-                  ? 'bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border-red-300 dark:border-red-800 hover:bg-red-100 animate-pulse'
-                  : 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:bg-blue-100'
+                  ? 'bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border-red-300 dark:border-red-800 animate-pulse'
+                  : 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
               }`}
             >
-              <Zap className={`w-3.5 h-3.5 ${isAdmin ? 'text-amber-600 fill-amber-400' : limitReached ? 'text-red-600 fill-red-400' : 'text-blue-600 fill-blue-300'}`} />
-              <span className="hidden sm:inline">
-                {isAdmin ? 'Unlimited' : limitReached ? 'Daily Limit Reached' : `${usageCount}/${dailyLimit} Uses`}
-              </span>
-              <span className="sm:hidden font-mono text-[11px]">
-                {isAdmin ? '∞' : `${usageCount}/${dailyLimit}`}
-              </span>
+              <Zap className={`w-3 h-3 ${isAdmin ? 'text-amber-600 fill-amber-400' : limitReached ? 'text-red-600 fill-red-400' : 'text-blue-600 fill-blue-300'}`} />
+              <span>{isAdmin ? '∞' : `${usageCount}/${dailyLimit}`}</span>
             </button>
-
-            {hasAnalysis && (
-              <button
-                onClick={onNewAnalysisClick}
-                className="hidden sm:flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-extrabold rounded-xl transition-colors shadow-xs cursor-pointer"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>New Analysis</span>
-              </button>
-            )}
 
             {/* USER PROFILE / AUTH MENU */}
             {currentUser ? (
               <div className="relative">
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center space-x-2 p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition-all border border-slate-200 dark:border-slate-700 cursor-pointer"
+                  className="flex items-center space-x-1.5 p-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-all border border-slate-200 dark:border-slate-700 cursor-pointer"
                 >
                   <img
                     src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || currentUser.email)}&background=2563eb&color=ffffff&bold=true&size=256`}
                     alt={currentUser.name}
-                    className="w-7 h-7 rounded-lg object-cover border border-white dark:border-slate-800"
+                    className="w-6 h-6 rounded-md object-cover"
                   />
-                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 hidden md:block max-w-[100px] truncate">
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 hidden md:block max-w-[80px] truncate">
                     {currentUser.name.split(' ')[0]}
                   </span>
-                  {isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-amber-600 fill-amber-300 shrink-0" />}
                 </button>
 
                 {userDropdownOpen && (
                   <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in duration-150">
                     <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 space-y-0.5">
-                      <span className="font-extrabold text-slate-900 dark:text-white text-xs block">{currentUser.name}</span>
+                      <span className="font-extrabold text-slate-900 dark:text-white text-xs block truncate">{currentUser.name}</span>
                       <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block truncate">{currentUser.email}</span>
                       {isAdmin && (
                         <span className="inline-block mt-1 px-2 py-0.5 bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 font-extrabold text-[9px] rounded-md uppercase">
@@ -392,7 +423,7 @@ export const Header: React.FC<HeaderProps> = ({
                         className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center space-x-2 cursor-pointer"
                       >
                         <User className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                        <span>View Profile & Saved Reports</span>
+                        <span>My Profile & Reports</span>
                       </button>
 
                       {isAdmin && (
@@ -401,7 +432,7 @@ export const Header: React.FC<HeaderProps> = ({
                           className="w-full text-left px-3 py-2 text-xs font-bold text-amber-900 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/60 rounded-lg flex items-center space-x-2 cursor-pointer"
                         >
                           <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-                          <span>Admin Management Portal</span>
+                          <span>Admin Portal</span>
                         </button>
                       )}
 
@@ -419,20 +450,20 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               <button
                 onClick={onOpenAuthModal}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition-all shadow-xs flex items-center space-x-1.5 cursor-pointer"
+                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1 cursor-pointer"
               >
                 <User className="w-3.5 h-3.5" />
-                <span>Sign In / Admin</span>
+                <span className="hidden sm:inline">Sign In</span>
               </button>
             )}
 
             {/* MOBILE MENU TOGGLE BUTTON */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              className="lg:hidden p-1.5 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -440,80 +471,134 @@ export const Header: React.FC<HeaderProps> = ({
         {/* MOBILE SLIDE-OUT MENU DRAWER */}
         {mobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-slate-100 dark:border-slate-800 space-y-4 animate-in slide-in-from-top-2 duration-200">
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => handleNavClick('input')}
-                className={`p-3 rounded-xl text-xs font-bold text-left flex items-center space-x-2 ${
-                  activeTab === 'input' ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
-                }`}
-              >
-                <Home className="w-4 h-4" />
-                <span>Home</span>
-              </button>
+            {/* Primary Mobile Links */}
+            <div className="grid grid-cols-2 gap-2 text-xs font-bold">
+              {primaryNav.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavClick(item.id)}
+                    className={`p-2.5 rounded-xl text-left flex items-center space-x-2 transition-colors ${
+                      isActive 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
 
-              <button
-                onClick={() => handleNavClick('jobs')}
-                className={`p-3 rounded-xl text-xs font-bold text-left flex items-center space-x-2 ${
-                  activeTab === 'jobs' ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
-                }`}
-              >
-                <Briefcase className="w-4 h-4" />
-                <span>Jobs & Projects</span>
-              </button>
-
-              <button
-                onClick={() => handleNavClick('chat')}
-                className={`p-3 rounded-xl text-xs font-bold text-left flex items-center space-x-2 ${
-                  activeTab === 'chat' ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
-                }`}
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>AI Career Coach</span>
-              </button>
-
-              <button
-                onClick={() => handleNavClick('profile')}
-                className={`p-3 rounded-xl text-xs font-bold text-left flex items-center space-x-2 ${
-                  activeTab === 'profile' ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
-                }`}
-              >
-                <User className="w-4 h-4" />
-                <span>My Profile</span>
-              </button>
+              {currentUser && (
+                <button
+                  onClick={() => handleNavClick('profile')}
+                  className={`p-2.5 rounded-xl text-left flex items-center space-x-2 ${
+                    activeTab === 'profile' ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
+                  }`}
+                >
+                  <User className="w-4 h-4" />
+                  <span>My Profile</span>
+                </button>
+              )}
 
               {isAdmin && (
                 <button
                   onClick={() => handleNavClick('admin')}
-                  className={`col-span-2 p-3 rounded-xl text-xs font-extrabold text-left flex items-center space-x-2 ${
+                  className={`col-span-2 p-2.5 rounded-xl text-xs font-bold text-left flex items-center space-x-2 ${
                     activeTab === 'admin' ? 'bg-amber-600 text-white' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4 text-amber-600" />
-                  <span>Super Admin Control Panel</span>
+                  <span>Super Admin Portal</span>
                 </button>
               )}
             </div>
 
-            {/* Additional Sub-pages in Mobile Drawer */}
-            <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">More Career Tools</span>
-              <div className="grid grid-cols-2 gap-1.5 text-xs font-semibold">
-                {interviewTools.concat(resumeTools).concat(careerTools).map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleNavClick(item.id)}
-                      className={`p-2 rounded-lg text-left flex items-center space-x-1.5 ${
-                        activeTab === item.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                      <span className="truncate">{item.label}</span>
-                    </button>
-                  );
-                })}
+            {/* Categorized Tools in Mobile Drawer */}
+            <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+              {/* Interview Hub */}
+              <div>
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-1.5">Interview Hub</span>
+                <div className="grid grid-cols-2 gap-1.5 text-xs font-medium">
+                  {interviewTools.map((t) => {
+                    const Icon = t.icon;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => handleNavClick(t.id)}
+                        className={`p-2 rounded-lg text-left flex items-center space-x-1.5 transition-colors ${
+                          activeTab === t.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                        <span className="truncate">{t.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Resume Tools */}
+              <div>
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-1.5">Resume Studio</span>
+                <div className="grid grid-cols-2 gap-1.5 text-xs font-medium">
+                  {resumeTools.map((t) => {
+                    const Icon = t.icon;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => handleNavClick(t.id)}
+                        className={`p-2 rounded-lg text-left flex items-center space-x-1.5 transition-colors ${
+                          activeTab === t.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                        <span className="truncate">{t.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Career Growth */}
+              <div>
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-1.5">Career & Compensation</span>
+                <div className="grid grid-cols-2 gap-1.5 text-xs font-medium">
+                  {careerTools.map((t) => {
+                    const Icon = t.icon;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => handleNavClick(t.id)}
+                        className={`p-2 rounded-lg text-left flex items-center space-x-1.5 transition-colors ${
+                          activeTab === t.id ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                        <span className="truncate">{t.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {!currentUser && (
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenAuthModal();
+                    }}
+                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2 transition-colors cursor-pointer shadow-xs"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>Sign In / Create Account</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

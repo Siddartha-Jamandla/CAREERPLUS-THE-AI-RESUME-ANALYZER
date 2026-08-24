@@ -115,7 +115,7 @@ export const ResumeInputSection: React.FC<ResumeInputSectionProps> = ({
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 py-6 px-4 sm:px-6">
+    <div className="max-w-5xl mx-auto space-y-10 py-4 px-2 sm:px-4">
       
       {/* 1. EXECUTIVE HERO BANNER */}
       <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 rounded-3xl p-8 sm:p-12 text-white shadow-2xl border border-slate-800 overflow-hidden">
