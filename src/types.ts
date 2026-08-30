@@ -105,6 +105,22 @@ export interface JobOpening {
   applyUrl: string;
 }
 
+export interface InternshipOpening {
+  roleTitle: string;
+  companyName: string;
+  location: string;
+  stipendOrSalary: string;
+  duration: string;
+  matchPercentage: number;
+  keySkillsRequired: string[];
+  eligibility: string;
+  workType: 'Remote' | 'Hybrid' | 'On-site';
+  postedTime: string;
+  platform: string;
+  applyUrl: string;
+  perks: string[];
+}
+
 export interface UpskillRoadmapSkill {
   skillName: string;
   whyNeeded: string;
@@ -186,6 +202,7 @@ export interface ResumeAnalysisResult {
   tailoredInterviewQuestions: InterviewQuestion[];
   quickActionChecklist: ActionItem[];
   recommendedJobs: JobOpening[];
+  recommendedInternships?: InternshipOpening[];
   freeCoursesWithCertificates: FreeCourse[];
   skillUpskillRoadmaps: UpskillRoadmapSkill[];
   portfolioProjectIdeas?: PortfolioProjectIdea[];
@@ -286,7 +303,7 @@ export interface AuditLogAction {
   id: string;
   userId: string;
   userEmail: string;
-  action: 'LOGIN' | 'LOGOUT' | 'SIGNUP' | 'ANALYZE_RESUME' | 'SAVE_RESUME' | 'UPDATE_PROFILE' | 'ADMIN_ACTION';
+  action: 'LOGIN' | 'LOGOUT' | 'SIGNUP' | 'ANALYZE_RESUME' | 'SAVE_RESUME' | 'UPDATE_PROFILE' | 'ADMIN_ACTION' | 'VISIT' | 'PAGE_VIEW';
   details: string;
   ipAddress?: string;
   userAgent?: string;
@@ -304,6 +321,65 @@ export interface SavedAnalysisRecord {
   analysis: ResumeAnalysisResult;
 }
 
+export interface VisitorEvent {
+  id: string;
+  timestamp: string;
+  tab: string;
+  action: string;
+  details?: string;
+}
+
+export interface VisitorSession {
+  visitorId: string;
+  sessionId: string;
+  isGuest: boolean;
+  userId?: string;
+  userName?: string;
+  userEmail?: string;
+  userAvatar?: string;
+  ipAddress: string;
+  deviceType: 'Desktop' | 'Mobile' | 'Tablet' | 'Unknown';
+  browser: string;
+  os: string;
+  timezone?: string;
+  screenResolution?: string;
+  referrer?: string;
+  initialVisitAt: string;
+  lastActiveAt: string;
+  totalDurationSeconds: number;
+  pageViewsCount: number;
+  currentTab: string;
+  isOnlineNow: boolean;
+  isBlocked?: boolean;
+  events: VisitorEvent[];
+}
+
+export interface TrafficHourlyStat {
+  hour: string; // e.g. "00:00", "01:00", ...
+  hourLabel: string; // e.g. "12 AM", "1 AM"
+  totalVisits: number;
+  guestVisits: number;
+  authenticatedVisits: number;
+}
+
+export interface TrafficAnalytics {
+  totalVisitorsAllTime: number;
+  totalPageViewsAllTime: number;
+  activeOnlineNow: number;
+  activeGuestsNow: number;
+  activeUsersNow: number;
+  todayTotalVisits: number;
+  todayUniqueVisitors: number;
+  todayGuestVisitors: number;
+  todayAuthenticatedVisitors: number;
+  guestPercentage: number;
+  avgSessionDurationSeconds: number;
+  topVisitedTabs: { tab: string; label: string; count: number; guestCount: number }[];
+  hourlyTraffic: TrafficHourlyStat[];
+  deviceBreakdown: { device: string; count: number; percentage: number }[];
+  browserBreakdown: { browser: string; count: number }[];
+}
+
 export interface AdminMetrics {
   totalUsers: number;
   activeSessions: number;
@@ -311,6 +387,28 @@ export interface AdminMetrics {
   avgAtsScore: number;
   topTargetRoles: { role: string; count: number }[];
   recentAuditLogs: AuditLogAction[];
+  liveVisitors?: {
+    onlineNow: number;
+    guestsNow: number;
+    usersNow: number;
+    todayTotalVisits: number;
+    todayUniqueVisitors: number;
+  };
+}
+
+export type ManagedProjectStatus = 'Planned' | 'In Progress' | 'Completed' | 'Added to Resume';
+export type ManagedJobStatus = 'Saved' | 'Applied' | 'Screening' | 'Interviewing' | 'Offer' | 'Rejected';
+export type ManagedCourseStatus = 'To Start' | 'In Progress' | 'Certified';
+export type ManagedQuestionStatus = 'Needs Practice' | 'Mastered';
+
+export interface UserCareerTrackingData {
+  projectStatuses: Record<string, { status: ManagedProjectStatus; notes?: string; updatedAt: string }>;
+  customProjects: PortfolioProjectIdea[];
+  jobStatuses: Record<string, { status: ManagedJobStatus; notes?: string; appliedDate?: string; updatedAt: string }>;
+  customJobs: JobOpening[];
+  courseStatuses: Record<string, { status: ManagedCourseStatus; updatedAt: string }>;
+  questionStatuses: Record<string, { status: ManagedQuestionStatus; notes?: string; updatedAt: string }>;
+  updatedAt?: string;
 }
 
 

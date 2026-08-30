@@ -139,12 +139,22 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="flex items-center justify-between h-16 gap-2">
           
-          {/* Logo & Direct Home Link */}
+          {/* Logo & Direct Home Link - Always routes to fresh AI Resume Analyzer Home */}
           <button
             type="button"
-            onClick={() => handleNavClick('input')}
-            title="CAREER PLUS+ Home"
-            aria-label="CAREER PLUS+ Home"
+            onClick={() => {
+              if (onNewAnalysisClick) {
+                onNewAnalysisClick();
+              } else {
+                handleNavClick('input');
+              }
+              setMobileMenuOpen(false);
+              setActiveDropdown(null);
+              setUserDropdownOpen(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            title="CAREER PLUS+ AI Resume Analyzer Home"
+            aria-label="CAREER PLUS+ AI Resume Analyzer Home"
             className="flex items-center space-x-1.5 text-left p-1 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500/40 cursor-pointer group shrink-0"
           >
             <CareerPlusLogo size="md" showText={true} />

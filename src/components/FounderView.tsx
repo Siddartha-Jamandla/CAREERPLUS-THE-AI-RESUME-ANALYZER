@@ -149,26 +149,6 @@ export const FounderView: React.FC<FounderViewProps> = ({
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-16 animate-in fade-in duration-200">
-      
-      {/* TOP NAVIGATION BACK BAR */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 sm:px-5 sm:py-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-        <button
-          type="button"
-          onClick={onNavigateBack}
-          className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/80 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-extrabold transition-all cursor-pointer group"
-        >
-          <ArrowLeft className="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:-translate-x-1 transition-transform" />
-          <span>Return to {returnPageName}</span>
-        </button>
-
-        <div className="flex items-center space-x-2 text-[11px] font-bold text-slate-500 dark:text-slate-400">
-          <span>Viewing:</span>
-          <span className="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 font-extrabold flex items-center space-x-1">
-            <Award className="w-3 h-3 text-amber-600" />
-            <span>Founder Spotlight Profile</span>
-          </span>
-        </div>
-      </div>
 
       {/* EXECUTIVE FOUNDER HERO CARD */}
       <div className="relative rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-6 sm:p-10 text-white overflow-hidden shadow-2xl border border-slate-800">

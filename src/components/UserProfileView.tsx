@@ -21,9 +21,11 @@ import {
   Save,
   LogOut,
   Camera,
-  Zap
+  Zap,
+  ArrowLeft
 } from 'lucide-react';
 import { AvatarCustomizerModal } from './AvatarCustomizerModal';
+import { UserCareerManagementHub } from './UserCareerManagementHub';
 
 interface UserProfileViewProps {
   user: UserProfile;
@@ -32,6 +34,8 @@ interface UserProfileViewProps {
   onLoadSavedAnalysis: (analysis: ResumeAnalysisResult, targetRole: string) => void;
   onLogout: () => void;
   onNavigateTab: (tab: string) => void;
+  onNavigateBack?: () => void;
+  returnTo?: string;
   usageCount?: number;
   dailyLimit?: number;
   remainingUses?: number;
@@ -44,6 +48,8 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
   onLoadSavedAnalysis,
   onLogout,
   onNavigateTab,
+  onNavigateBack,
+  returnTo,
   usageCount = 0,
   dailyLimit = 5,
   remainingUses = 5,
@@ -596,6 +602,15 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* CANDIDATE CAREER & RESUME INTELLIGENCE DATA MANAGEMENT HUB */}
+      <UserCareerManagementHub
+        token={token}
+        savedAnalyses={savedAnalyses}
+        targetRole={user.targetRole || 'Software Engineer'}
+        onNavigateTab={onNavigateTab}
+        onLoadSavedAnalysis={onLoadSavedAnalysis}
+      />
 
       {/* CANDIDATE DATA & PROFILE HISTORY MANAGEMENT CARD */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xs card-3d space-y-5">

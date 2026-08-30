@@ -69,13 +69,13 @@ export const ProjectIdeasShowcase: React.FC<ProjectIdeasShowcaseProps> = ({
         <div className="space-y-1.5">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
             <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>AI Resume Enhancer • {projectList.length} Recommended Projects</span>
+            <span>AI Resume Enhancer • {projectList.length} Recommended Project Ideas</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            10 High-Impact Portfolio Projects for {targetRole}
+            10 High-Impact Portfolio Project Ideas for {targetRole}
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
-            Bridge identified skill gaps and strengthen your resume with production-grade projects. Each project includes step-by-step roadmaps, recommended tech stacks, free learning docs, and ready-to-use resume bullet points.
+            Bridge identified skill gaps and strengthen your resume with production-grade project ideas. Each project includes step-by-step roadmaps, recommended tech stacks, free learning docs, and ready-to-use resume bullet points.
           </p>
         </div>
 

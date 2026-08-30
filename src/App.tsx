@@ -38,13 +38,45 @@ import { FounderModal } from './components/FounderModal';
 import { DEFAULT_SAMPLE_ANALYSIS } from './utils/defaultAnalysis';
 import { ResumeAnalysisInput, ResumeAnalysisResult, UserProfile } from './types';
 import { Sparkles, CheckCircle2, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { NavigationBreadcrumbBar, PAGE_TITLES } from './components/NavigationBreadcrumbBar';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('input');
-  const [analysisResult, setAnalysisResult] = useState<ResumeAnalysisResult | null>(null);
-  const [currentInput, setCurrentInput] = useState<ResumeAnalysisInput | null>(null);
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    const hash = window.location.hash.replace('#', '');
+    return hash || 'input';
+  });
+
+  // Cached analysis and resume input state to guarantee ZERO data loss across navigation
+  const [analysisResult, setAnalysisResult] = useState<ResumeAnalysisResult | null>(() => {
+    try {
+      const cached = sessionStorage.getItem('cp_active_analysis_result');
+      return cached ? JSON.parse(cached) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const [currentInput, setCurrentInput] = useState<ResumeAnalysisInput | null>(() => {
+    try {
+      const cached = sessionStorage.getItem('cp_active_current_input');
+      return cached ? JSON.parse(cached) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Universal Navigation History Stack
+  const [navHistory, setNavHistory] = useState<string[]>(() => {
+    try {
+      const h = sessionStorage.getItem('cp_nav_history');
+      return h ? JSON.parse(h) : [];
+    } catch (e) {
+      return [];
+    }
+  });
 
   // Legal & Security Modal State
   const [isLegalModalOpen, setIsLegalModalOpen] = useState<boolean>(false);
@@ -94,26 +126,81 @@ export default function App() {
     }
   }, [isDarkMode]);
 
-  // Initialize session from localStorage and log visitor ping
+  // Initialize session from localStorage, setup visitor tracking and heartbeat
+  const getVisitorId = () => {
+    let vid = localStorage.getItem('cp_visitor_id');
+    if (!vid) {
+      vid = 'vis_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now().toString(36);
+      localStorage.setItem('cp_visitor_id', vid);
+    }
+    return vid;
+  };
+
+  const getSessionId = () => {
+    let sid = sessionStorage.getItem('cp_session_id');
+    if (!sid) {
+      sid = 'sess_' + Math.random().toString(36).substring(2, 11);
+      sessionStorage.setItem('cp_session_id', sid);
+    }
+    return sid;
+  };
+
+  const logVisitorPing = async (tab?: string, action?: string, details?: string) => {
+    try {
+      const token = localStorage.getItem('cp_auth_token');
+      const headers: any = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const visitorId = getVisitorId();
+      const sessionId = getSessionId();
+      const currentTab = tab || activeTab || 'input';
+
+      const payload = {
+        visitorId,
+        sessionId,
+        currentTab,
+        action: action || 'PAGE_VIEW',
+        details: details || `Browsing ${currentTab} view`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+        screenResolution: `${window.screen.width}x${window.screen.height}`,
+        referrer: document.referrer || 'Direct / Organic'
+      };
+
+      await fetch('/api/visitor-log', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      // silent fail
+    }
+  };
+
   useEffect(() => {
     const savedToken = localStorage.getItem('cp_auth_token');
     if (savedToken) {
       fetchCurrentUser(savedToken);
     }
     fetchUsageStatus();
-    logVisitorPing();
+    logVisitorPing(activeTab, 'INITIAL_SESSION_START', 'Candidate landed on platform');
+
+    // Heartbeat ping every 30 seconds
+    const heartbeatTimer = setInterval(() => {
+      const vid = getVisitorId();
+      fetch('/api/visitor-heartbeat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visitorId: vid, currentTab: activeTab })
+      }).catch(() => {});
+    }, 30000);
+
+    return () => clearInterval(heartbeatTimer);
   }, []);
 
-  const logVisitorPing = async () => {
-    try {
-      const token = localStorage.getItem('cp_auth_token');
-      const headers: any = {};
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      await fetch('/api/visitor-log', { method: 'POST', headers });
-    } catch (err) {
-      // silent
-    }
-  };
+  // Track tab transitions in visitor log
+  useEffect(() => {
+    logVisitorPing(activeTab, 'SWITCH_TAB', `User switched to tab: ${activeTab}`);
+  }, [activeTab]);
 
   const fetchUsageStatus = async () => {
     try {
@@ -131,12 +218,25 @@ export default function App() {
     }
   };
 
+  // Automatically persist active analysis and input to sessionStorage so data is NEVER lost across navigations
+  useEffect(() => {
+    if (analysisResult) {
+      sessionStorage.setItem('cp_active_analysis_result', JSON.stringify(analysisResult));
+    }
+  }, [analysisResult]);
+
+  useEffect(() => {
+    if (currentInput) {
+      sessionStorage.setItem('cp_active_current_input', JSON.stringify(currentInput));
+    }
+  }, [currentInput]);
+
   // Hash-based multi-page URL sync
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      if (hash) {
-        changeTabWithHash(hash);
+      if (hash && hash !== activeTab) {
+        changeTabWithHash(hash, false);
       }
     };
 
@@ -146,7 +246,19 @@ export default function App() {
     }
 
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [activeTab]);
+
+  // Global keyboard shortcut for Alt+ArrowLeft Back navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && e.key === 'ArrowLeft') {
+        e.preventDefault();
+        handleNavigateBack();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navHistory, returnToTab, activeTab]);
 
   const handleOpenAuth = (sourceTab?: string) => {
     const previous = sourceTab || (activeTab !== 'auth' && activeTab !== 'founder' ? activeTab : returnToTab || 'input');
@@ -164,7 +276,17 @@ export default function App() {
     changeTabWithHash('founder');
   };
 
-  const changeTabWithHash = (tab: string) => {
+  const changeTabWithHash = (tab: string, isBackNavigation: boolean = false) => {
+    if (tab === activeTab) return;
+
+    if (!isBackNavigation) {
+      setNavHistory(prev => {
+        const nextHist = [...prev.filter(t => t !== activeTab), activeTab].slice(-15);
+        sessionStorage.setItem('cp_nav_history', JSON.stringify(nextHist));
+        return nextHist;
+      });
+    }
+
     // If user opens auth or founder tab from any page, store the current page as return destination
     if ((tab === 'auth' || tab === 'founder') && activeTab !== 'auth' && activeTab !== 'founder') {
       setReturnToTab(activeTab);
@@ -189,6 +311,24 @@ export default function App() {
     }
     setActiveTab(tab);
     window.location.hash = tab;
+  };
+
+  const handleNavigateBack = () => {
+    if (navHistory.length > 0) {
+      const prevTab = navHistory[navHistory.length - 1];
+      const updatedHist = navHistory.slice(0, -1);
+      setNavHistory(updatedHist);
+      sessionStorage.setItem('cp_nav_history', JSON.stringify(updatedHist));
+      changeTabWithHash(prevTab, true);
+    } else if (returnToTab && returnToTab !== activeTab) {
+      changeTabWithHash(returnToTab, true);
+    } else {
+      changeTabWithHash('input', true);
+    }
+  };
+
+  const handleNavigateHome = () => {
+    changeTabWithHash('input');
   };
 
   const fetchCurrentUser = async (token: string) => {
@@ -393,20 +533,30 @@ export default function App() {
       )}
 
       {/* Main Content Area bounded cleanly within 1024px */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 lg:px-6 py-6">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 lg:px-6 py-6 space-y-4">
         
+        {/* UNIVERSAL BREADCRUMB & BACK BUTTON NAVIGATION BAR */}
+        <NavigationBreadcrumbBar
+          currentTab={activeTab}
+          previousTab={navHistory.length > 0 ? navHistory[navHistory.length - 1] : (returnToTab !== activeTab ? returnToTab : 'input')}
+          onNavigateBack={handleNavigateBack}
+          onNavigateHome={handleNavigateHome}
+          hasAnalysis={!!analysisResult}
+          targetRole={targetRoleName}
+        />
+
         {/* VIEW 0: DEDICATED FOUNDER PAGE (RETURNS TO PREVIOUS PAGE) */}
         {activeTab === 'founder' ? (
           <FounderView
             returnTo={returnToTab}
-            onNavigateBack={() => changeTabWithHash(returnToTab !== 'founder' && returnToTab !== 'auth' ? returnToTab : 'input')}
+            onNavigateBack={handleNavigateBack}
             onNavigateTab={changeTabWithHash}
           />
         ) : activeTab === 'auth' ? (
           /* VIEW 0.5: DEDICATED SIGN IN / SIGN UP PAGE (RETURNS TO PREVIOUS PAGE) */
           <AuthView
             returnTo={returnToTab}
-            onNavigateBack={() => changeTabWithHash(returnToTab !== 'auth' && returnToTab !== 'founder' ? returnToTab : 'input')}
+            onNavigateBack={handleNavigateBack}
             onLoginSuccess={handleLoginSuccess}
           />
         ) : activeTab === 'profile' ? (
@@ -419,18 +569,28 @@ export default function App() {
               onLoadSavedAnalysis={handleLoadSavedAnalysis}
               onLogout={handleLogout}
               onNavigateTab={changeTabWithHash}
+              onNavigateBack={handleNavigateBack}
+              returnTo={navHistory.length > 0 ? navHistory[navHistory.length - 1] : returnToTab}
             />
           ) : (
             <div className="max-w-md mx-auto py-12 text-center space-y-4">
               <ShieldCheck className="w-12 h-12 text-blue-600 mx-auto" />
               <h2 className="text-xl font-black text-slate-900 dark:text-white">Sign In Required</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">Please sign in to view and manage your candidate profile.</p>
-              <button
-                onClick={() => handleOpenAuth('profile')}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-colors cursor-pointer shadow-md"
-              >
-                Sign In / Register
-              </button>
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={handleNavigateBack}
+                  className="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl cursor-pointer"
+                >
+                  Go Back
+                </button>
+                <button
+                  onClick={() => handleOpenAuth('profile')}
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-colors cursor-pointer shadow-md"
+                >
+                  Sign In / Register
+                </button>
+              </div>
             </div>
           )
         ) : activeTab === 'admin' ? (
@@ -439,18 +599,24 @@ export default function App() {
             currentUser={currentUser}
             token={authToken}
             onOpenAuthModal={() => handleOpenAuth('admin')}
+            onNavigateBack={handleNavigateBack}
+            returnTo={navHistory.length > 0 ? navHistory[navHistory.length - 1] : returnToTab}
           />
         ) : activeTab === 'reviews' ? (
           /* VIEW 3: COMMUNITY REVIEWS & FEEDBACK */
           <ReviewsSection
             currentUser={currentUser}
             onOpenAuthModal={() => handleOpenAuth('reviews')}
+            onNavigateBack={handleNavigateBack}
+            returnTo={navHistory.length > 0 ? navHistory[navHistory.length - 1] : returnToTab}
           />
         ) : activeTab === 'about' ? (
           /* VIEW 4: ABOUT US & FOUNDER SECTION */
           <AboutUsView
             onNavigateTab={changeTabWithHash}
             onOpenFounderModal={() => handleOpenFounder('about')}
+            onNavigateBack={handleNavigateBack}
+            returnTo={navHistory.length > 0 ? navHistory[navHistory.length - 1] : returnToTab}
           />
         ) : activeTab === 'voice-interview' ? (
           <VoiceVideoInterviewer analysisData={analysisResult} targetRole={targetRoleName} />
@@ -467,6 +633,7 @@ export default function App() {
         ) : !analysisResult ? (
           /* VIEW 4: INITIAL RESUME INPUT FORM */
           <ResumeInputSection
+            initialInput={currentInput}
             onAnalyze={handleAnalyze}
             isLoading={isLoading}
             errorMessage={errorMessage}

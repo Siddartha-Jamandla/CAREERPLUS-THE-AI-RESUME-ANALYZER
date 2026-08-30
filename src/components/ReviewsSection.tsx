@@ -14,7 +14,8 @@ import {
   TrendingUp, 
   ShieldCheck,
   User,
-  AlertCircle
+  AlertCircle,
+  ArrowLeft
 } from 'lucide-react';
 import { UserProfile } from '../types';
 
@@ -36,6 +37,8 @@ interface PlatformReview {
 interface ReviewsSectionProps {
   currentUser: UserProfile | null;
   onOpenAuthModal: () => void;
+  onNavigateBack?: () => void;
+  returnTo?: string;
 }
 
 const FEATURE_OPTIONS = [
@@ -51,6 +54,8 @@ const FEATURE_OPTIONS = [
 export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
   currentUser,
   onOpenAuthModal,
+  onNavigateBack,
+  returnTo,
 }) => {
   const [reviews, setReviews] = useState<PlatformReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -188,7 +193,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-wrap gap-2">
               <span className="px-3 py-1 rounded-full text-[10px] font-black bg-amber-400 text-slate-950 uppercase tracking-wider flex items-center space-x-1">
                 <Star className="w-3.5 h-3.5 fill-slate-950" />
                 <span>Verified Candidate Feedback</span>

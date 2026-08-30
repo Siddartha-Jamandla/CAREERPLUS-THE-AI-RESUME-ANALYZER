@@ -22,9 +22,13 @@ import {
   Copy,
   Terminal,
   Zap,
-  CheckSquare
+  CheckSquare,
+  Building2,
+  Calendar,
+  Gift,
+  Star
 } from 'lucide-react';
-import { ResumeAnalysisResult, JobOpening, FreeCourse, UpskillRoadmapSkill, PortfolioProjectIdea } from '../types';
+import { ResumeAnalysisResult, JobOpening, FreeCourse, UpskillRoadmapSkill, PortfolioProjectIdea, InternshipOpening } from '../types';
 import { DEFAULT_SAMPLE_ANALYSIS } from '../utils/defaultAnalysis';
 
 interface JobsAndUpskillHubProps {
@@ -36,8 +40,10 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
   analysis,
   targetRole,
 }) => {
-  const [activeTab, setActiveTab] = useState<'jobs' | 'courses' | 'projects' | 'roadmaps'>('projects');
+  const [activeTab, setActiveTab] = useState<'jobs' | 'internships' | 'courses' | 'projects' | 'roadmaps'>('projects');
   const [jobSearchFilter, setJobSearchFilter] = useState<string>('');
+  const [internshipSearchFilter, setInternshipSearchFilter] = useState<string>('');
+  const [internshipTypeFilter, setInternshipTypeFilter] = useState<string>('All');
   const [courseSearchFilter, setCourseSearchFilter] = useState<string>('');
   const [projectSearchFilter, setProjectSearchFilter] = useState<string>('');
   const [projectDifficultyFilter, setProjectDifficultyFilter] = useState<string>('All');
@@ -60,7 +66,22 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
     return matchesDiff && matchesQuery;
   });
 
-  const jobsList: JobOpening[] = (analysis.recommendedJobs && analysis.recommendedJobs.length >= 10) ? analysis.recommendedJobs : [
+  const internshipsList: InternshipOpening[] = (analysis.recommendedInternships && analysis.recommendedInternships.length > 0)
+    ? analysis.recommendedInternships
+    : (DEFAULT_SAMPLE_ANALYSIS.recommendedInternships || []);
+
+  const filteredInternships = internshipsList.filter(i => {
+    const matchesType = internshipTypeFilter === 'All' || (i.workType || '').toLowerCase() === internshipTypeFilter.toLowerCase();
+    const query = internshipSearchFilter.toLowerCase();
+    const matchesQuery = !query || 
+      i.roleTitle.toLowerCase().includes(query) || 
+      i.companyName.toLowerCase().includes(query) || 
+      i.location.toLowerCase().includes(query) ||
+      i.keySkillsRequired.some(s => s.toLowerCase().includes(query));
+    return matchesType && matchesQuery;
+  });
+
+  const jobsList: JobOpening[] = (analysis.recommendedJobs && analysis.recommendedJobs.length > 0) ? analysis.recommendedJobs : [
     {
       jobTitle: `${targetRole}`,
       companyName: "Google",
@@ -283,7 +304,7 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
     }
   ];
 
-  const coursesList: FreeCourse[] = (analysis.freeCoursesWithCertificates && analysis.freeCoursesWithCertificates.length >= 10) ? analysis.freeCoursesWithCertificates : [
+  const coursesList: FreeCourse[] = (analysis.freeCoursesWithCertificates && analysis.freeCoursesWithCertificates.length > 0) ? analysis.freeCoursesWithCertificates : [
     {
       title: `Full Stack Developer & ${targetRole} Certification`,
       provider: "freeCodeCamp",
@@ -523,66 +544,82 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
         <div className="relative z-10 space-y-3">
           <div className="flex items-center space-x-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>100% Genuine Jobs • Free Certifications • Resume Project Roadmaps</span>
+            <span>100% Genuine Jobs & Internships • Free Certifications • Project Ideas Roadmaps</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Apply to Genuine Jobs, Earn Certifications & Build High-Weight Projects
+            Apply to Genuine Jobs & Internships, Earn Certifications & Build High-Weight Project Ideas
           </h2>
           <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
-            Tailored specifically for <strong className="text-blue-300 font-bold">{targetRole}</strong>: Build portfolio projects with free resources & roadmaps, take 100% free certified courses, and apply to verified active job portals.
+            Tailored specifically for <strong className="text-blue-300 font-bold">{targetRole}</strong>: Build portfolio project ideas with free resources & roadmaps, discover active hiring internships with verified stipends, take 100% free certified courses, and apply to verified live jobs.
           </p>
 
           {/* Quick Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-800">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-3 border-t border-slate-800">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
               <span className="text-lg sm:text-xl font-extrabold text-amber-400">{portfolioProjects.length}</span>
-              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Resume Projects</span>
+              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Project Ideas</span>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
               <span className="text-lg sm:text-xl font-extrabold text-emerald-400">{coursesList.length}</span>
-              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Free Certified Courses</span>
+              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Free Courses</span>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+              <span className="text-lg sm:text-xl font-extrabold text-teal-400">{internshipsList.length}</span>
+              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Live Internships</span>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
               <span className="text-lg sm:text-xl font-extrabold text-blue-400">{jobsList.length}</span>
-              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Genuine Job Portals</span>
+              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Genuine Jobs</span>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
               <span className="text-lg sm:text-xl font-extrabold text-violet-400">{analysis.skillsMatchScore || 85}%</span>
-              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Profile Readiness</span>
+              <span className="block text-[10px] text-slate-400 uppercase font-semibold">Readiness Score</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-slate-200 bg-white rounded-2xl p-1.5 shadow-xs overflow-x-auto">
+      <div className="flex border-b border-slate-200 bg-white rounded-2xl p-1.5 shadow-xs overflow-x-auto gap-1">
         <button
           onClick={() => setActiveTab('projects')}
-          className={`flex-1 min-w-[160px] py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+          className={`flex-1 min-w-[150px] py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
             activeTab === 'projects'
               ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <FolderGit2 className="w-4 h-4 text-amber-300" />
-          <span>Resume Projects ({portfolioProjects.length})</span>
+          <span>Project Ideas ({portfolioProjects.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('internships')}
+          className={`flex-1 min-w-[150px] py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+            activeTab === 'internships'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+          }`}
+        >
+          <Building2 className="w-4 h-4 text-teal-300" />
+          <span>Internships ({internshipsList.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('courses')}
-          className={`flex-1 min-w-[160px] py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+          className={`flex-1 min-w-[150px] py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
             activeTab === 'courses'
               ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <GraduationCap className="w-4 h-4" />
-          <span>Free Courses w/ Certs ({coursesList.length})</span>
+          <span>Free Courses ({coursesList.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('jobs')}
-          className={`flex-1 min-w-[160px] py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+          className={`flex-1 min-w-[150px] py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
             activeTab === 'jobs'
               ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -594,14 +631,14 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
 
         <button
           onClick={() => setActiveTab('roadmaps')}
-          className={`flex-1 min-w-[160px] py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+          className={`flex-1 min-w-[150px] py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
             activeTab === 'roadmaps'
               ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <Compass className="w-4 h-4" />
-          <span>Skill Roadmaps</span>
+          <span>Roadmaps</span>
         </button>
       </div>
 
@@ -612,12 +649,12 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
             <div className="flex items-center space-x-3">
               <Zap className="w-5 h-5 text-amber-600 shrink-0 fill-amber-500" />
               <div className="text-xs">
-                <span className="font-extrabold block">How 10 Suggested Projects Increase Resume Weight:</span>
-                <span>Adding 1-2 production-grade projects with metrics (e.g. latency reduction, caching, AI/LLM integration) instantly compensates for experience gaps in recruiter screens.</span>
+                <span className="font-extrabold block">How 10 Suggested Project Ideas Increase Resume Weight:</span>
+                <span>Adding 1-2 production-grade project ideas with metrics (e.g. latency reduction, caching, AI/LLM integration) instantly compensates for experience gaps in recruiter screens.</span>
               </div>
             </div>
             <span className="shrink-0 px-3 py-1 bg-amber-100/80 rounded-full font-black text-xs text-amber-950">
-              {rawProjects.length} Projects Suggested
+              {rawProjects.length} Project Ideas Suggested
             </span>
           </div>
 
@@ -808,7 +845,186 @@ export const JobsAndUpskillHub: React.FC<JobsAndUpskillHubProps> = ({
         </div>
       )}
 
-      {/* TAB 2: FREE COURSES WITH CERTIFICATIONS */}
+      {/* TAB 2: ACTIVE & GENUINE INTERNSHIPS (HIRING NOW) */}
+      {activeTab === 'internships' && (
+        <div className="space-y-4">
+          {/* Header Bar with Search and Type Filter */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <input
+                type="text"
+                value={internshipSearchFilter}
+                onChange={(e) => setInternshipSearchFilter(e.target.value)}
+                placeholder="Search internships by role, company, skills, or location..."
+                className="w-full pl-9 p-2 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <div className="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
+                {(['All', 'Remote', 'Hybrid', 'On-site'] as const).map(type => (
+                  <button
+                    key={type}
+                    onClick={() => setInternshipTypeFilter(type)}
+                    className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                      internshipTypeFilter === type
+                        ? 'bg-teal-600 text-white shadow-2xs'
+                        : 'hover:text-slate-900'
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+
+              <div className="text-xs text-teal-800 font-extrabold flex items-center space-x-1 shrink-0 bg-teal-50 px-3 py-2 rounded-xl border border-teal-200">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>{filteredInternships.length} Active Openings</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Genuine Guarantee Alert */}
+          <div className="bg-gradient-to-r from-teal-50 via-emerald-50 to-blue-50 border border-teal-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-3">
+              <ShieldCheck className="w-5 h-5 text-teal-600 shrink-0" />
+              <div className="text-xs text-teal-950">
+                <span className="font-extrabold block">100% Genuine & Verified Internship Opportunities:</span>
+                <span>Direct portal links from top tech leaders (Google, Microsoft, Meta, Stripe, OpenAI, etc.) with pre-placement offer (PPO) conversion pathways, verified hourly/monthly stipends, and housing support.</span>
+              </div>
+            </div>
+            <span className="shrink-0 px-3 py-1 bg-teal-600 text-white font-extrabold text-xs rounded-full shadow-2xs">
+              Direct Apply
+            </span>
+          </div>
+
+          {/* Internships Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredInternships.map((internship, idx) => (
+              <div
+                key={idx}
+                className="bg-white border border-slate-200 hover:border-teal-500 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all space-y-4 flex flex-col justify-between group"
+              >
+                <div className="space-y-3.5">
+                  {/* Top Badges & Match */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200 flex items-center space-x-1">
+                          <Building2 className="w-3 h-3 text-teal-600" />
+                          <span>{internship.platform || 'Company Careers'}</span>
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center space-x-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          <span>{internship.postedTime || 'Actively Hiring'}</span>
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-600">
+                          {internship.workType}
+                        </span>
+                      </div>
+
+                      <h3 className="text-base font-black text-slate-900 group-hover:text-teal-700 transition-colors leading-tight pt-1">
+                        {internship.roleTitle}
+                      </h3>
+                      <p className="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
+                        <span className="text-teal-600 font-extrabold">{internship.companyName}</span>
+                      </p>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <div className="text-sm font-black text-teal-700 bg-teal-50 px-2.5 py-1 rounded-xl border border-teal-200/80 inline-block shadow-2xs">
+                        {internship.matchPercentage}% Match
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Key Details: Location, Stipend, Duration */}
+                  <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 space-y-2 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700">
+                      <div className="flex items-center space-x-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate font-medium text-slate-800">{internship.location}</span>
+                      </div>
+                      <div className="flex items-center space-x-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate font-medium text-slate-800">{internship.duration}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-1.5 text-emerald-800 bg-emerald-50/70 px-2.5 py-1.5 rounded-lg border border-emerald-200/60 font-semibold">
+                      <DollarSign className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>{internship.stipendOrSalary}</span>
+                    </div>
+                  </div>
+
+                  {/* Eligibility */}
+                  {internship.eligibility && (
+                    <div className="text-xs text-slate-600">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-0.5">
+                        Eligibility:
+                      </span>
+                      <p className="text-[11px] font-medium text-slate-700 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+                        {internship.eligibility}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Required Skills */}
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                      Required Skills & Topics:
+                    </span>
+                    <div className="flex flex-wrap gap-1">
+                      {internship.keySkillsRequired.map((skill, sIdx) => (
+                        <span
+                          key={sIdx}
+                          className="px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-800 text-[11px] font-medium rounded-md"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Perks / Benefits */}
+                  {internship.perks && internship.perks.length > 0 && (
+                    <div>
+                      <span className="text-[10px] font-bold text-teal-800 uppercase tracking-wider block mb-1 flex items-center space-x-1">
+                        <Gift className="w-3 h-3 text-teal-600" />
+                        <span>Featured Perks & Return Offer Pathway:</span>
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                        {internship.perks.map((perk, pIdx) => (
+                          <div key={pIdx} className="flex items-center space-x-1 text-[11px] text-slate-700">
+                            <Check className="w-3 h-3 text-emerald-600 shrink-0" />
+                            <span className="truncate">{perk}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Direct Apply Button */}
+                <div className="pt-3 border-t border-slate-100">
+                  <a
+                    href={internship.applyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-4 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl transition-colors flex items-center justify-center space-x-2 shadow-xs cursor-pointer"
+                  >
+                    <span>Apply for Internship on {internship.platform || 'Careers Portal'}</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-teal-200" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: FREE COURSES WITH CERTIFICATIONS */}
       {activeTab === 'courses' && (
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">

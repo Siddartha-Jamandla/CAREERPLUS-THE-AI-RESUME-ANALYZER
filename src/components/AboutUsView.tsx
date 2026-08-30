@@ -21,17 +21,22 @@ import {
   ArrowRight,
   Code,
   Brain,
-  GraduationCap
+  GraduationCap,
+  ArrowLeft
 } from 'lucide-react';
 
 interface AboutUsViewProps {
   onNavigateTab: (tab: string) => void;
   onOpenFounderModal: () => void;
+  onNavigateBack?: () => void;
+  returnTo?: string;
 }
 
 export const AboutUsView: React.FC<AboutUsViewProps> = ({
   onNavigateTab,
   onOpenFounderModal,
+  onNavigateBack,
+  returnTo,
 }) => {
   const platformFeatures = [
     { id: 'input', label: 'ATS Resume Analyzer', icon: FileText, cat: 'Resume AI', desc: 'Sub-50ms multi-dimensional resume parsing & ATS gap detection.' },
@@ -76,7 +81,7 @@ export const AboutUsView: React.FC<AboutUsViewProps> = ({
             CAREER PLUS+ is an enterprise-grade AI career intelligence platform designed to level the hiring field. Powered by our advanced CAREER PLUS+ AI Engine, we provide real-time resume optimization, ATS audit matrices, live voice & video mock interviews, and career growth roadmap tools.
           </p>
 
-          <div className="pt-2 flex flex-wrap gap-3">
+          <div className="pt-2 flex flex-wrap gap-3 items-center">
             <button
               onClick={onOpenFounderModal}
               className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all flex items-center space-x-2 cursor-pointer"

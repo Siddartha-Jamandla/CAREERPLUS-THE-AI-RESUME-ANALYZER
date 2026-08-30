@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
-  Sparkles,
   Zap
 } from 'lucide-react';
 import { UserProfile } from '../types';
@@ -276,34 +275,9 @@ export const AuthView: React.FC<AuthViewProps> = ({
     }
   };
 
-  // Quick One-Click Fill for Demo Testing
-  const fillDemoAccount = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setActiveTab('login');
-    setError(null);
-    setSuccessMessage(null);
-  };
-
   return (
     <div className="space-y-6 max-w-xl mx-auto py-4 px-2 sm:px-4 animate-in fade-in duration-200">
       
-      {/* TOP NAVIGATION BACK BAR */}
-      <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={onNavigateBack}
-          className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-all shadow-2xs cursor-pointer group"
-        >
-          <ArrowLeft className="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:-translate-x-0.5 transition-transform" />
-          <span>Return to {returnPageName}</span>
-        </button>
-
-        <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
-          Redirect target: <strong className="text-blue-600 dark:text-blue-400">{returnPageName}</strong>
-        </span>
-      </div>
-
       {/* MAIN AUTH CARD */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
         
@@ -632,42 +606,6 @@ export const AuthView: React.FC<AuthViewProps> = ({
               </button>
             </form>
           )}
-
-          {/* QUICK DEMO & TEST ACCOUNTS */}
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Quick Test Accounts (1-Click Fill)
-              </span>
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('alex.turner@example.com', 'candidate123')}
-                className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200 dark:border-slate-700/80 text-left transition-colors cursor-pointer"
-              >
-                <div className="font-extrabold text-[11px] text-slate-900 dark:text-white flex items-center justify-between">
-                  <span>Demo Candidate</span>
-                  <span className="text-[9px] px-1.5 py-0.2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded font-bold">User</span>
-                </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">alex.turner@example.com</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('jamandlasiddartha@gmail.com', 'admin123')}
-                className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-amber-50 dark:hover:bg-amber-950/40 border border-slate-200 dark:border-slate-700/80 text-left transition-colors cursor-pointer"
-              >
-                <div className="font-extrabold text-[11px] text-slate-900 dark:text-white flex items-center justify-between">
-                  <span>Super Admin</span>
-                  <span className="text-[9px] px-1.5 py-0.2 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300 rounded font-bold">Founder</span>
-                </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">jamandlasiddartha@gmail.com</div>
-              </button>
-            </div>
-          </div>
 
         </div>
       </div>
